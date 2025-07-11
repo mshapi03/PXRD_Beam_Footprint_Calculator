@@ -1,3 +1,6 @@
+### Superceded by code in PXRD_Sample_Considerations (July 11, 2025)
+
+
 # Assistant script to calculate MAC of sample provided an approximate chemical formula and density
 # To be used to validate sample thickness choice for given sample holder
 
@@ -17,7 +20,6 @@ sample_chem_formula = input("Enter your exact/approximate chemical formula: ")
 incident_energy = input("Enter your incident energy (keV): ")
 
 print(sample_chem_formula)
-print(sample_density)
 
 # Overview:
 # String parser to deconvolute the chem_formula input into usable lookup values

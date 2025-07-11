@@ -1,5 +1,8 @@
 # Developed by Mitch S-A
-# Updated on July 10, 2025
+# Updated on July 11, 2025
+# Reason for archiving:
+#   Because the atomic MAC's ripped from NIST are additive, we don't need to do our own density calcs!
+#   The code below is a great example of complex logic, so I'm leaving it for archival reasons.
 # Usage Notes: Single-human beta test shows no issue. No unit testing performed on simplifying functions. Yields the following:
 #   A dictionary of elements and their stoichiometry (element_dict)
 #   A user-specified density (true_density) for MAC calculations
@@ -38,7 +41,7 @@ def chem_form_parser(formula):
 # Generates dictionary of relevant atomic information based on a stoich dictionary from chem_form_parser
 def get_atomic_info(stoich_dict):
     atomic_info_dictionary = {}  # Establish desired dictionary as empty
-    with open("Element_Densities_and_Weights.json", 'r') as jsonfile:  # Read in .json with necessary information
+    with open("../Element_Densities_and_Weights.json", 'r') as jsonfile:  # Read in .json with necessary information
         element_data_dict = json.load(jsonfile)
         for element in stoich_dict.keys():  # Pull each unique element from input stoich_dict (e.g "Ca")
             # element_data_dict[element] yields the list of values for that element of the form /
@@ -70,14 +73,6 @@ def density_calc(stoich_dict, atomic_info): # Takes a dictionary from chem_form_
     return calculated_density
 
 # ---------- Function debugging section ----------
-
-# sample_CaCO3_dict = {'Ca': 1.0, 'C': 1.0, 'O': 3.0}
-# sample_metal_dict = {'Fe': 5.0, 'Cu': 3.0, 'O': 20.0, 'C':6}
-#
-# master_CaCO3_dict = get_atomic_info(sample_CaCO3_dict)
-# master_metal_dict = get_atomic_info(sample_metal_dict)
-# print(density_calc(sample_CaCO3_dict, master_CaCO3_dict))
-# print(density_calc(sample_metal_dict, master_metal_dict))
 
 # ---------- Begin user facing code ----------
 # Welcome message
@@ -149,7 +144,7 @@ if master_atomic_info is not None:
     density_user_confirmation = False  # Establish a bool to ensure the user can confirm their input
     sample_calculated_density = density_calc(element_dict, master_atomic_info) # Calculate estimated density
     print("""You may choose to provide your sample's density or use a linear combination (LC) of densities from atomic
-    constituents For your sample, this LC is {:.2f} g/cm^3.""".format(sample_calculated_density))
+constituents For your sample, this LC is {:.2f} g/cm^3.""".format(sample_calculated_density))
     print("Note that best results are obtained with a literature-based or empirically determined sample density.")
     while not density_user_confirmation: # Continues until the user confirms a numerical input density
         density_user_choice = input("Enter your own (c)ustom density or use the (p)rovided density? c/p: ")
@@ -182,3 +177,47 @@ if master_atomic_info is not None:
 # A user-specified density (true_density) for MAC calculations
 # For Z <= 92: A dictionary of values ["Z", "Element", "Z/A", "I (eV)", "Density (g/cm3)", "Molecular Weight (g/mol)"]
 #   which can be called with master_atomic_info
+
+# Calculating the MAC
+
+# Convert Cu, Co, and Mo shorthand to usable keV number:
+Cu_Co_Mo = {"Cu": 8.04, "Co": 6.93, "Mo": 17.479}
+
+# Prompt user for the incident X-ray energy used
+incident_energy = 0 # Establish a variable to hold the energy for calculations
+energy_input_checker = False # Establish a boolean to allow user to check their input
+while incident_energy == 0 and not energy_input_checker:
+    incident_energy_input = input(
+    """Please enter your incident x-ray energy. You may enter "Cu", "Co", "Mo" if you are using an x-ray tube, or type
+in a value in keV (1-15000):""") # Prompt user for incident energy
+    # Data validation if statement
+    try:
+        float(incident_energy_input)
+        if float(incident_energy_input) < 1 or float(incident_energy_input) > 15000:
+            print("Invalid input. Please enter a number or one of [\"Cu\", \"Co\", \"Mo\"].")
+            continue
+    except ValueError:
+        if incident_energy_input not in Cu_Co_Mo.keys():
+            print("Invalid input. Please enter a number or one of [\"Cu\", \"Co\", \"Mo\"].")
+            continue
+    # Standard user confirmation loop
+    radiation_reaffirmation = input("You have entered {radiation} (keV). Is this correct? y/n: ".format(radiation=incident_energy_input))
+    if radiation_reaffirmation not in ["y", "n"]: # Data validation
+        print("Invalid input. Please enter y or n.") # Returns to the beginning of the while loop
+    else:
+        if radiation_reaffirmation == "y": # Store numerical energy in incident_energy
+            if incident_energy_input in Cu_Co_Mo.keys():
+                incident_energy = Cu_Co_Mo[incident_energy_input]
+            else:
+                incident_energy = incident_energy_input
+            energy_input_checker = True  # This escapes the while not energy_input_confirmation loop
+            print("Incident energy stored.")  # Visual confirmation to user
+        elif radiation_reaffirmation == "n":
+            continue  # Throws back to the beginning of the while not energy_input_confirmation loop
+
+print(incident_energy)
+
+
+# Parse Atomic_LAC_Working.json for the relevant higher and lower energy for each element
+# Assume linearity between those two points and calculate the best estimate of LAC for that element
+# Use the molecular_weight calc function and density_function code to
