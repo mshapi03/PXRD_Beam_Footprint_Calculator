@@ -1,11 +1,14 @@
 # Developed by Mitch S-A
 # Updated on July 10, 2025
-# Usage Notes: Don't
-# Dev Notes: Implement an interference checker when the x-ray beam source is selected (e.g. raise flag if Cu X-rays are used with Fe species)
+# Usage Notes: Single-human beta test shows no issue. No unit testing performed on simplifying functions. Yields the following:
+#   A dictionary of elements and their stoichiometry (element_dict)
+#   A user-specified density (true_density) for MAC calculations
+#   For Z <= 92: A dictionary of values ["Z", "Element", "Z/A", "I (eV)", "Density (g/cm3)", "Molecular Weight (g/mol)"]
+#       which can be called with master_atomic_info
+# Reminders:
+#   Implement an interference checker when the x-ray beam source is selected (e.g. raise flag if Cu X-rays are used with Fe species)
+#   Continue developing MAC_Calculator in here and then switch to beam-sample considerations
 # Status: Non-functional, unmanaged git integration
-
-# To-Do:
-# Finalize density calculation section (line 123)
 
 # ---------- Necessary imports ----------
 
@@ -116,21 +119,66 @@ except Exception as e:
     print("An error occurred: {e}. Density calculation for your sample unavailable.".format(e=e))
     master_atomic_info = None
 
-# Loop to determine density of sample
-
 true_density = 0 # Establish the density to be used in penetration depth calculations
-density_user_confirmation = False # Establish a bool to ensure the user can confirm their input
-while true_density == 0 and not density_user_confirmation:
-    if master_atomic_info is None: # Code to use if the user's sample does not generate atomic substituent dictionary
-        print("You will need to provide your sample's density or best estimate of it in g/cm^3.")
+
+# Loop to use if the user's sample does not generate atomic substituent dictionary
+if master_atomic_info is None:
+    print("You will need to provide your sample's density or best estimate of it in g/cm^3.")
+    density_user_confirmation = False  # Establish a bool to ensure the user can confirm their input
+    while not density_user_confirmation: # Continues until the user confirms a numerical input density
         user_input_density = input("Please enter your sample's density (g/cm^3): ")
-        # Code to ask for user estimated density and confirm with user
-    elif master_atomic_info is not None:  # Code to use if the user's sample does generate atomic substituent dictionary
-        print("You may choose to provide your sample's density or use a linear combination of densities from atomic constituents.")
-        print("Note that best results are obtained with a literature-based or empirically determined sample density.")
-        calculated_density = density_calc(element_dict, master_atomic_info)
-        print("Your sample's density is {:.2f} g/cm^3.".format(calculated_density))
-        density_user_choice = input("Enter your own (c)ustom density or use the (p)rovided density? c/p ")
+        try: # Check and make sure value is able to become a float and repeat until successful
+            true_density = float(user_input_density) # Stores density as true_density
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            continue
+        # Repeat user's density back to them and begin standard y/n loop
+        density_reaffirmation = input(
+            "You have entered {density} g/cm^3. Is this correct? y/n: ".format(density=user_input_density))
+        if density_reaffirmation != "y" and density_reaffirmation != "n": # Ensure y/n response
+            print("Invalid input. Please enter y or n.")
+        else:
+            if density_reaffirmation == "y":
+                density_user_confirmation = True  # This escapes the while not density_user_confirmation loop
+                print("Density stored.")  # Visual confirmation to user
+            elif density_reaffirmation == "n":
+                continue  # Throws back to the beginning of the while not density_user_confirmation loop
 
+# Loop to use if the user's sample does generate atomic substituent dictionary
+if master_atomic_info is not None:
+    density_user_confirmation = False  # Establish a bool to ensure the user can confirm their input
+    sample_calculated_density = density_calc(element_dict, master_atomic_info) # Calculate estimated density
+    print("""You may choose to provide your sample's density or use a linear combination (LC) of densities from atomic
+    constituents For your sample, this LC is {:.2f} g/cm^3.""".format(sample_calculated_density))
+    print("Note that best results are obtained with a literature-based or empirically determined sample density.")
+    while not density_user_confirmation: # Continues until the user confirms a numerical input density
+        density_user_choice = input("Enter your own (c)ustom density or use the (p)rovided density? c/p: ")
+        if density_user_choice != "c" and density_user_choice != "p":
+            print("Invalid input. Please enter c or p.")
+            break # Reprompt for user input, preventing code from proceeding with true_density = 0
+        elif density_user_choice == "c": # Allow user input code like in the above density loop
+            user_input_density = input("Please enter your sample's density (g/cm^3): ")
+            try:  # Check and make sure value is able to become a float and repeat until successful
+                true_density = float(user_input_density)  # Stores density as true_density
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+                continue
+        elif density_user_choice == "p": # Auto-assign calculated density
+            true_density = sample_calculated_density
+        # Repeat user's density back to them and begin standard y/n loop
+        density_reaffirmation = input(
+        "You have entered/selected {density} g/cm^3. Is this correct? y/n: ".format(density=true_density))
+        if density_reaffirmation != "y" and density_reaffirmation != "n":  # Ensure y/n response
+            print("Invalid input. Please enter y or n.")
+        else:
+            if density_reaffirmation == "y":
+                density_user_confirmation = True  # This escapes the while not density_user_confirmation loop
+                print("Density stored.")  # Visual confirmation to user
+            elif density_reaffirmation == "n":
+                continue  # Throws back to the beginning of the while not density_user_confirmation loop
 
-# Tell user what the assumed density will be and proceed.
+# By this point, for the user's sample, you have:
+# A dictionary of elements and their stoichiometry (element_dict)
+# A user-specified density (true_density) for MAC calculations
+# For Z <= 92: A dictionary of values ["Z", "Element", "Z/A", "I (eV)", "Density (g/cm3)", "Molecular Weight (g/mol)"]
+#   which can be called with master_atomic_info
