@@ -1,10 +1,7 @@
 # Developed by Mitch S-A
-# Updated on July 11, 2025
+# Updated on July 13, 2025
 # Cloned from PXRD_Sample_Consideration and removed unnecessary sample density work
-# Usage Notes: Single-human beta test shows no issue. No unit testing performed on simplifying functions.
-# Reminders:
-#   Implement an interference checker when the x-ray beam source is selected (e.g. raise flag if Cu X-rays are used with Fe species)
-#   Continue developing MAC_Calculator in here and then switch to beam-sample considerations
+# Usage Notes: Single-human beta test shows no issue. No unit testing performed on individual functions.
 # Status: Non-functional, unmanaged git integration
 
 # ---------- Necessary imports ----------
@@ -40,22 +37,26 @@ class DiffractionSample:
             # ['Z', 'Element', 'Z/A', 'I (eV)', 'Density (g/cm3)', 'Molecular Weight (g/mol)']
             molecular_weight_sum += float(atomic_info[element][5]) * float(
                 self.stoich[element])  # molecular weight * stoichiometric abundance
-        self.molecular_weight = molecular_weight_sum # Becomes a callable parameter as it is a quality of the sample
+        self.molecular_weight_value = molecular_weight_sum # Becomes a callable parameter as it is a quality of the sample
         return molecular_weight_sum
 
     def get_relative_abundance(self, atomic_info, molecular_weight): # Returns a dict of {"element" : relative abundance}
-        relative_abundance = {}
+        relative_abundance_dictionary = {}
         for element in self.stoich.keys():
             gram_percent_abundance = (float(self.stoich[element]) * float(atomic_info[element][5])) / molecular_weight
-            relative_abundance[element] = gram_percent_abundance
-        return relative_abundance
+            relative_abundance_dictionary[element] = gram_percent_abundance
+        self.relative_abundance = relative_abundance_dictionary
 
     def calculate_sample_MAC(self, relative_abundance_dict, MAC_dict):
-        pass
-        # rel_abu_Dict is of the form {"element": abundance}
+        # "For compounds and mixtures, values for μ/ρ can be obtained by simple additivity
+        # i.e., combining values for the elements according to their proportions by weight."
+        # https://physics.nist.gov/PhysRefData/XrayMassCoef/intro.html
+        mass_atten_coef = 0
+        # rel_abu_dict is of the form {"element": abundance}
         # MAC_dict is of the form {"element": MAC}
-        # Simple algebra
-        # self.mass_atten_coef = mass_atten_coef # Becomes a callable parameter as it is a quality of the sample
+        for element in relative_abundance_dict.keys(): # Keys in both dictionaries match
+            mass_atten_coef += relative_abundance_dict[element] * MAC_dict[element]
+        self.mass_atten_coefficient = mass_atten_coef # Becomes a callable parameter as it is a quality of the sample
 
 # ---------- Simplifying functions ----------
 
@@ -68,7 +69,7 @@ def chem_form_parser(formula):
         if len(element_counts) == 0:
             print("Could not recognize formula '{}'".format(formula))
             print("""Please ensure your formula is free of the following: \n>> * \n>> ·\n>> sub/superscript formating"
->> unorthodox chemical notation (e.g. use \"Ca4Al2C3O20H22\" for 3CaO·Al₂O₃·CaCO₃·11H₂O\n""")
+>> unorthodox chemical notation (e.g. use \"Ca4Al2C3O20H22\" for 3CaO·Al₂O₃·CaCO₃·11H₂O)\n""")
             return {}
         return element_counts
     except Exception as e:
@@ -88,17 +89,49 @@ def get_atomic_info(stoich_dict):
     # avoids reading in the same large .json file multiple times
     return atomic_info_dictionary
 
-# def get_sample_MAC_library(stoich_dict, incident_energy):
-# should read .json file and return a dictionary with {"element": "MAC", etc.} for all elements in sample
-# Keys will match stoich_dict
-# Values: iterate through the keys in the .json file and find proper range of energies
-    # Find the two entries (keys in the values of the nested dict which surround the passed incident energy (i.e. 10.0 and 15.0 if 12.5 keV is passed)
-    # Calculate the "bias" of the passed energy (abs(15.0 - 12.5)/abs(15.0 - 10.0) = 50.0%
-    # Pull the MACs from the surroudning incident energy - e.g. values attached to 10.0 and 15.0, 0.1 and 0.2
-    # Assume linearity between MACs and apply the bias - e.g. MAC = 0.1 + (100% + 50%)*(0.2-0.1)
-    # Save that as the MAC value for the element
+# Generates dictionary of elemental MAC values for all elements in a given sample with given energy
+def get_sample_MAC_library(atomic_info, incident_energy):
+    sample_MAC_library = {} # Establish empty dictionary to be populated and returned by the function
+    incident_energy_num = float(incident_energy) # Make sure function input is a float for math/comparisons later
+    with open("Atomic_LAC_Working.json", "r") as jsonfile: # Read in .json with necessary information
+        full_LAC_dict = json.load(jsonfile) # Contents of "Atomic_LAC_Working.json" is now callable with Full_LAC_dict variable
+        proton_numbers = [] # Establish an empty list to hold Z values of sample elements, used to iterate through .json
+        returnable_key_list =[] # Establish an empty list to hold chemical symbol "keys" for final dict
+        for element in atomic_info.keys(): # Iterate through "Symbol" (e.g. "Ca") in atomic_info
+            returnable_key_list.append(element) # Populate final "keys" list
+            proton_numbers.append(atomic_info[element][0]) # Populate list with Z of each element
+        calculated_elemental_MACs = [] # Establish an empty list to hold each Z's calculated MAC
+        for proton in proton_numbers:
+            energy_dependent_MAC_dict = full_LAC_dict.get(str(proton))  # Navigate to the sub-dictionary of all MACs for the element
+            keV_MAC_bounds = [] # Empty list to store floats for MAC calculation
+            # After for loop, contains [lower keV bound, upper MAC value, upper keV bound, lower MAC value]
+            # Keep in mind that lower energy has higher MAC!
+            for keV in energy_dependent_MAC_dict.keys(): # Iterate through every keV in the elements keV/MAC list
+                keV_num = float(keV) # Type conversion to allow proper </> comparisons
+                if keV_num <= incident_energy_num: # Update the keV and MAC values if a closer value is found
+                    keV_MAC_bounds.clear()
+                    keV_MAC_bounds.append(keV_num)
+                    keV_MAC_bounds.append(energy_dependent_MAC_dict[keV])
+                elif keV_num > incident_energy_num: # Assign the current keV and MAC values as the first value above the input
+                    keV_MAC_bounds.append(keV_num)
+                    keV_MAC_bounds.append(energy_dependent_MAC_dict[keV])
+                    break # break the loop as soon as this value is found
+            # Assume linearity between the two energies and calculate a fudge factor
+            # Calculated as a percentage closeness to lower keV (e.g. 0.98 for Cu/8.04 keV compared to 8 and 10 keV)
+            linearity_bias = (keV_MAC_bounds[2] - incident_energy_num) / (keV_MAC_bounds[2] - keV_MAC_bounds[0])
+            # Applied linearity fudge factor to pull MACs to yield single representative elemental MAC
+            biased_MAC = keV_MAC_bounds[1] - ((1 - linearity_bias) * (keV_MAC_bounds[1] - keV_MAC_bounds[3]))
+            calculated_elemental_MACs.append(biased_MAC)
+        for i in range(0, len(returnable_key_list)):
+            sample_MAC_library[returnable_key_list[i]] = calculated_elemental_MACs[i]
+    return sample_MAC_library
 
-# ---------- Function debugging section ----------
+# Check to see if chosen incident energy will induce fluorescence with sample atoms?
+### Unsure of how I want to develop - could be a simple checker
+### Could also read in a list of all elemental K edge energies and compare to used incident energy...
+### Varying levels of complexity to tackle this!
+def beam_and_sample_interference(list_of_sample_atoms, incident_energy):
+    pass
 
 # ---------- Begin user facing code ----------
 # Welcome message
@@ -133,28 +166,23 @@ print("Dictionary conversion successful.")
 # Pull dictionary of relevant atomic information based on the user input if all Z <= 92
 print("Gathering information about the atoms in your sample...")
 try:
-    master_atomic_info = get_atomic_info(element_dict)
-except Exception as e: # Terminates program if sample contains elements with Z > 92
-    master_atomic_info = None # Set master_atomic_info as a variable to properly instantiate Diffraction_Sample instance
+    sample_atomic_info = get_atomic_info(element_dict)
+except Exception as e: # Skips remaining program if sample contains elements with Z > 92
+    # Note: Right now this is NOT integrated - if sample has z > 92, the code will just crash
+    sample_atomic_info = None # Set master_atomic_info as a variable to properly instantiate Diffraction_Sample instance
     print("An error occurred: {e}".format(e=e))
     print("This is the result of unrecognized elements (Z > 92). MAC calculation for your sample is unavailable.")
     print("However, the program can still check the beam's axial and equatorial profile will fit on your sample.")
 
 # Instantiate the DiffractionSample class with user input information
-
-if master_atomic_info: # If atomic info library is generated, z remains calculable
+if sample_atomic_info: # If atomic info library is generated, z remains calculable
     user_sample = DiffractionSample(element_dict)
 else: # Otherwise overwrite the default z to False so the beam calculator script can avoid thickness calcs
     user_sample = DiffractionSample(element_dict, False)
 
-### Testing the class instantiation
-
-# print(user_sample)
-# print(user_sample.stoich)
-# print(user_sample.z_calculable)
-# test_molecular_weight = user_sample.molecular_weight(master_atomic_info)
-# print(test_molecular_weight)
-# print(user_sample.get_relative_abundance(master_atomic_info, test_molecular_weight))
+### Here is where code should go to:
+#   Terminate this script if user_sample.z_calculable == False
+#   Begin the next script to calculate x-y profile only
 
 # Prompt user for the incident X-ray energy used
 incident_energy = 0 # Establish a variable to hold the energy for calculations
@@ -162,7 +190,7 @@ energy_input_checker = False # Establish a boolean to allow user to check their 
 while incident_energy == 0 and not energy_input_checker:
     incident_energy_input = input(
     """Please enter your incident x-ray energy. You may enter "Cu", "Co", "Mo" if you are using an x-ray tube, or type
-in a value in keV (1-15000):""") # Prompt user for incident energy
+in a value in keV (1-15000): """) # Prompt user for incident energy
     # Data validation if statement
     try:
         float(incident_energy_input)
@@ -188,11 +216,30 @@ in a value in keV (1-15000):""") # Prompt user for incident energy
         elif radiation_reaffirmation == "n":
             continue  # Throws back to the beginning of the while not energy_input_confirmation loop
 
-print(incident_energy)
+### Check selected incident energy against known fluorescence interferences?
 
+print("Attempting to calculate the MAC of your sample...")
 
-# Use global function to parse Atomic_LAC_Working.json for the relevant higher and lower energy for each element
-# Line 91: get_sample_MAC_library(stoich_dict, incident_energy)
+# Calculate the sample molecular weight with a class method and atomic info
+user_sample.molecular_weight(sample_atomic_info)
 
-# Use class function to determine the sample's MAC
-# Line 53: def calculate_sample_MAC(self, relative_abundance_dict, MAC_dict):
+# Calculate the relative abundances of atoms in your sample in gram basis using class method
+user_sample.get_relative_abundance(sample_atomic_info, user_sample.molecular_weight_value)
+
+# Call get_sample_MAC_library on the sample to generate {"element" : MAC to use for given energy}
+sample_MAC_dict = get_sample_MAC_library(sample_atomic_info, incident_energy)
+
+# Call class method calculate_sample_MAC
+user_sample.calculate_sample_MAC(user_sample.relative_abundance, sample_MAC_dict) # Callable as user_sample.mass_atten_coefficient
+
+# Confirm success with user as print statement
+print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
+
+# At this point, this script can pass a diffraction sample with:
+#   self.stoich - a dictionary of stoich a in the form {"Element" : "Atoms/Molecule"}
+#   self.molecular_weight_value - the molecular weight of the sample
+#   self.relative_abundance - a dictionary of {"element" : relative abundance}
+#   self.mass_atten_coefficient - the MAC of the sample for the incident energy the user identified
+# You could also pass:
+#   The incident energy the user identified (incident_energy)
+#   A dictionary of the elemental MACs for the user identified energy (pre-weighted sum)
