@@ -1,8 +1,8 @@
 # Developed by Mitch S-A
-# Updated on July 13, 2025
+# Updated on July 14, 2025
 # Cloned from PXRD_Sample_Consideration and removed unnecessary sample density work
-# Usage Notes: Single-human beta test shows no issue. No unit testing performed on individual functions.
-# Status: Non-functional, unmanaged git integration
+# Usage Notes: Single-human beta test shows no terminal issue. No unit testing performed on individual functions.
+# Status: Functional as a part one, poorly managed git integration
 
 # ---------- Necessary imports ----------
 
@@ -126,16 +126,36 @@ def get_sample_MAC_library(atomic_info, incident_energy):
             sample_MAC_library[returnable_key_list[i]] = calculated_elemental_MACs[i]
     return sample_MAC_library
 
-# Check to see if chosen incident energy will induce fluorescence with sample atoms?
-### Unsure of how I want to develop - could be a simple checker
-### Could also read in a list of all elemental K edge energies and compare to used incident energy...
-### Varying levels of complexity to tackle this!
-def beam_and_sample_interference(list_of_sample_atoms, incident_energy):
-    pass
+# Generate a dictionary of all x-ray edges for the atoms in the user's sample
+def get_edge_info(stoich_dict):
+    sample_x_ray_energy_dictionary ={} # Established desired dictionary as empty
+    with open("x-ray_absorption_edges_UW.json", "r") as jsonfile: # Read in .json with necessary information
+        master_x_ray_energy_dict = json.load(jsonfile) # Make JSON file accessible as dictionary
+        for element in stoich_dict.keys(): # Iterate through the elements in the user's sample
+            try: # Append edge information for elements 11 <= Z <= 92
+                sample_x_ray_energy_dictionary[element] = master_x_ray_energy_dict[element]
+            except KeyError: # Ignore elements 1 <= Z < 11 (no pertinent edges) or Z > 92
+                continue
+    # return an abridged x-ray edge info dictionary containing data only for relevant elements
+    # Avoids reading in the same large .json file multiple times
+    return sample_x_ray_energy_dictionary
+
+# Flag if the incident energy is close to any known sample edges
+def beam_and_sample_interference(atoms_and_x_ray_energies, incident_energy):
+    incident_energy_num = float(incident_energy)
+    print("Referencing the atoms in your sample against the incident energy...")
+    warning_counter = 0 # Logs the number of times an interference is found
+    for element in atoms_and_x_ray_energies: # Iterate through elements in the sample
+        for edge in atoms_and_x_ray_energies[element]: # Iterate through edges for the element
+            # Raise warning if the edge is within 1 keV of the incident energy
+            if abs(incident_energy_num - float(edge[1])) <= 1:
+                print("Potential interference: {edge} edge of {element} atom lies at {energy}.".format(edge=edge[0], element=element, energy=edge[1]))
+                warning_counter += 1 # Adds one to the interference counter
+    print("{} warning(s) raised.".format(warning_counter))
 
 # ---------- Begin user facing code ----------
-# Welcome message
 
+# Welcome message
 print("""Welcome to the powder XRD beam footprint calculator! This program is designed to help you determine the best
 optics settings for your sample, sample holder, and diffractometer when collecting powder X-ray diffraction data.""")
 
@@ -165,24 +185,21 @@ print("Dictionary conversion successful.")
 
 # Pull dictionary of relevant atomic information based on the user input if all Z <= 92
 print("Gathering information about the atoms in your sample...")
-try:
-    sample_atomic_info = get_atomic_info(element_dict)
-except Exception as e: # Skips remaining program if sample contains elements with Z > 92
-    # Note: Right now this is NOT integrated - if sample has z > 92, the code will just crash
+try: # Gather info necessary for MAC and thickness calculations
+    sample_atomic_info = get_atomic_info(element_dict) # Gets Z, density, atomic weight, etc.
+except Exception as e: # Sets a flag to skip MAC/thickness calculations in remaining program if sample contains elements with Z > 92
     sample_atomic_info = None # Set master_atomic_info as a variable to properly instantiate Diffraction_Sample instance
     print("An error occurred: {e}".format(e=e))
     print("This is the result of unrecognized elements (Z > 92). MAC calculation for your sample is unavailable.")
     print("However, the program can still check the beam's axial and equatorial profile will fit on your sample.")
+else: # Allows for program to still flag potential absorption/fluorescence issues
+    sample_x_ray_edges = get_edge_info(element_dict)  # Gets energies at which absorption occurs for each element
 
 # Instantiate the DiffractionSample class with user input information
 if sample_atomic_info: # If atomic info library is generated, z remains calculable
     user_sample = DiffractionSample(element_dict)
 else: # Otherwise overwrite the default z to False so the beam calculator script can avoid thickness calcs
     user_sample = DiffractionSample(element_dict, False)
-
-### Here is where code should go to:
-#   Terminate this script if user_sample.z_calculable == False
-#   Begin the next script to calculate x-y profile only
 
 # Prompt user for the incident X-ray energy used
 incident_energy = 0 # Establish a variable to hold the energy for calculations
@@ -216,30 +233,54 @@ in a value in keV (1-15000): """) # Prompt user for incident energy
         elif radiation_reaffirmation == "n":
             continue  # Throws back to the beginning of the while not energy_input_confirmation loop
 
-### Check selected incident energy against known fluorescence interferences?
+### HERE is where code could:
+#   Terminate this script if user_sample.z_calculable == False
+#   Begin the next script to calculate x-y profile only
 
-print("Attempting to calculate the MAC of your sample...")
+# Check for sample-beam interactions if atomic libraries were calculated correctly
 
-# Calculate the sample molecular weight with a class method and atomic info
-user_sample.molecular_weight(sample_atomic_info)
+if user_sample.z_calculable:
+    # Auto-check selected incident energy against known fluorescence interferences using beam and sample interference function
+    print("Checking for potential undesirable interactions between incident beam and sample...")
+    beam_and_sample_interference(sample_x_ray_edges, incident_energy)
+    # Prompt user to see all x-ray edges for their sample to do a manual check
+    interference_y_n_checked = False # Establish bool to ensure proper y/n looping
+    while not interference_y_n_checked:
+        manual_interference_checker = input("Would you like to examine the known absorption edges of the atoms in your sample? y/n: ")
+        if manual_interference_checker not in ["y", "n"]:
+            print("Invalid input. Please enter y or n.") # Throw back to above prompt
+        elif manual_interference_checker == "y": # Print all edges with user-friendly formatting
+            for element, interference_list in sample_x_ray_edges.items():
+                print("{}:".format(element))
+                for edge in interference_list:
+                    print("{edge} edge: {energy} keV, wavelength: {wavelength} angstroms.".format(edge=edge[0], energy=edge[1], wavelength=edge[2]))
+            interference_y_n_checked = True
+        elif manual_interference_checker == "n": # Move on without printing
+            interference_y_n_checked = True
 
-# Calculate the relative abundances of atoms in your sample in gram basis using class method
-user_sample.get_relative_abundance(sample_atomic_info, user_sample.molecular_weight_value)
+# Calculate sample MAC if atomic libraries are generated correctly
 
-# Call get_sample_MAC_library on the sample to generate {"element" : MAC to use for given energy}
-sample_MAC_dict = get_sample_MAC_library(sample_atomic_info, incident_energy)
+if user_sample.z_calculable:
+    print("Attempting to calculate the MAC of your sample...")
+    # Calculate the sample molecular weight with a class method and atomic info
+    user_sample.molecular_weight(sample_atomic_info)
+    # Calculate the relative abundances of atoms in your sample in gram basis using class method
+    user_sample.get_relative_abundance(sample_atomic_info, user_sample.molecular_weight_value)
+    # Call get_sample_MAC_library on the sample to generate {"element" : MAC to use for given energy}
+    sample_MAC_dict = get_sample_MAC_library(sample_atomic_info, incident_energy)
+    # Call class method calculate_sample_MAC
+    user_sample.calculate_sample_MAC(user_sample.relative_abundance, sample_MAC_dict) # Callable as user_sample.mass_atten_coefficient
+    # Confirm success with user as print statement
+    print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
 
-# Call class method calculate_sample_MAC
-user_sample.calculate_sample_MAC(user_sample.relative_abundance, sample_MAC_dict) # Callable as user_sample.mass_atten_coefficient
+print("Moving to beam shape considerations (part 2)...")
 
-# Confirm success with user as print statement
-print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
-
-# At this point, this script can pass a diffraction sample with:
-#   self.stoich - a dictionary of stoich a in the form {"Element" : "Atoms/Molecule"}
-#   self.molecular_weight_value - the molecular weight of the sample
-#   self.relative_abundance - a dictionary of {"element" : relative abundance}
-#   self.mass_atten_coefficient - the MAC of the sample for the incident energy the user identified
-# You could also pass:
-#   The incident energy the user identified (incident_energy)
-#   A dictionary of the elemental MACs for the user identified energy (pre-weighted sum)
+# At this point, this script can pass a:
+#   (class variable) self.stoich - a dictionary of stoichiometry in the form {"Element" : "Atoms/Molecule"}
+#   (global variable) The incident energy the user identified (incident_energy)
+# Additionally, if the z_calculable is true (all elements Z > 92) you can pass:
+#   (cv) self.molecular_weight_value - the molecular weight of the sample
+#   (cv) self.relative_abundance - a dictionary of {"element" : relative abundance}
+#   (cv) self.mass_atten_coefficient - the MAC of the sample for the incident energy the user identified
+#   (gv) A dictionary of the elemental MACs for the user identified energy (pre-weighted sum)
+#   (gv) A dictionary of the elemental absorption edges for the atoms in the sample
