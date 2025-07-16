@@ -1,0 +1,7 @@
+# Created and editted by Mitch S-A July 16, 2025
+
+# Ignore scraping repository while edits are focused on part 2
+Scrapers/
+
+# Ignore STIXE repository
+# STIXE/
