@@ -16,9 +16,9 @@ during the planning or set-up of a benchtop XRD instrument (like a Malvern Panal
 
 This project aims to address both of these problems in as much breadth as possible to lower the barrier to entry to collecting high-quality diffractograms. 
 
-## Sample Thickness and Incident X-Ray Energy
+## Sample Thickness and Incident X-Ray Energy (STIXE)
 
-The first question is addressed by the _PXRD_Sample_Considerations_V2.py_ script. The program takes a user input molecular formula and incident beam energy, and returns the mass attenuation coefficient
+The first question is addressed by the _PXRD_Sample_Considerations.py_ script, located in the _STIXE_ folder. The program takes a user input molecular formula and incident beam energy, and returns the mass attenuation coefficient
 of the sample. To do this, it references the included JSON dictionaries:
 
 + **Atomic_LAC_Working.json** - a nested dictionary containing a table of incident energy (keV) vs. elemental mass attenuation coefficient (g/cm<sup>3</sup>) for all elements. Of the form _{{"Z": "keV": MAC, "keV": MAC, etc..._
@@ -35,9 +35,6 @@ The code should be sufficiently commented to be read through with only novice un
 like the final sample mass attenuation coefficient, as saved into class variables. Once the program understands the atoms in the user's sample, it will generate smaller dictionaries containing with only the key:value pairs of 
 included atoms. These subdictionaries are not saved to class variables, as they are not needed to move on to the second script (below). If the program cannot understand the user's chemical formula, it will flag a class variable
 boolean that will skip the remainder of the programs where errors could be encountered.
-
-The _Superceded_ folder contains archival scripts and text files that are no longer in use. This folder was initialized before the author could properly perofrm version control in Git, and it frankly remains to be seen if this
-has changed.
 
 As this is ultimately an educational exercise and only the beginnings of implementable tool, there is only basic y/n looping to ensure proper user inputs. There is a fair amount of repetition and poor handling or data types,
 so feel free to clone this repository and clean this up for your own use!
