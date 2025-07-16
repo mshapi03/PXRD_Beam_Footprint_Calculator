@@ -100,4 +100,4 @@ for element in atomic_symbols: # Iterate from "Na" to "U"
     complete_uw_edge_repository[element] = create_element_dict[element]
     print("Completed x-ray edge retrival for: {element}".format(element=element))
 # Write the file
-simple_json_writer(complete_uw_edge_repository, "../x-ray_absorption_edges_UW.json")
+simple_json_writer(complete_uw_edge_repository, "../STIXE/x-ray_absorption_edges_UW.json")
