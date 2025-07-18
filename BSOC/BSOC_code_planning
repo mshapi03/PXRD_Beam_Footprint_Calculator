@@ -1,0 +1,82 @@
+PXRD_Sample_Considerations.py is the main script of STIXE
+It can pass:
+#   (class variable) self.stoich - a dictionary of stoichiometry in the form {"Element" : "Atoms/Molecule"}
+#   (global variable) The incident energy the user identified (incident_energy)
+# Additionally, if the z_calculable is true (all elements Z > 92) you can pass:
+#   (cv) self.molecular_weight_value - the molecular weight of the sample
+#   (cv) self.relative_abundance - a dictionary of {"element" : relative abundance}
+#   (cv) self.mass_atten_coefficient - the MAC of the sample for the incident energy the user identified
+#   (gv) A dictionary of the elemental MACs for the user identified energy (pre-weighted sum)
+#   (gv) A dictionary of the elemental absorption edges for the atoms in the sample
+
+BSOC code will need the following imports:
+# class DiffractionSample from PXRD_Sample_Considerations.py
+# csv (probably to read in known goniometers)
+#   Although given the specificity of each gonio/configuration, we may custom write a CSV instead
+#   This can't be automatically generated
+# matplotlib for visualization
+
+BSOC code will need the following classes:
+1 Goniometer class including global gonio variables and a self.configuration
+#   i.e. self.tube, self.brand (Malvern, Bruker, Rigaku)*, self.model (X'Pert, etc.)
+#   * will be useful to make sure we only pull sample holders compatible with that brand :)
+#
+2 Configuration class including non-numerical details about how the instrument is set up
+#   i.e. self.refl_trans_pb, self.bb, self.focus, self.fixed_varied, self.monochrom, self.optics
+#   self.refl_trans is reflection, transmission, or parallel_beam geometry
+#   self.bb_pb is bragg-brentano (True or False)
+#   self.focus will flag the method of focus, slits or mirrors
+#   Fixed or varied will determine constant irradiated volume (changing beam length) or constant irradiated length (changing beam volume)
+#   Need to supply the graph of beam length or divergence angle size vs. 2-theta
+#   Monochrom will flag an incident monochromator
+#   Worth noting that many of these will not be fleshed out in the current version (i.e. only implementing MIT's X'Pert)
+#
+3 Optics class will be numerical details about configuration
+#   Remaining things will be necessary optics
+#   self.monochrom_angle, self.mask, self.i_slit, self.mirror, etc.
+
+BSOC code will need the following functions:
+# "quit" program function to check if user input is "quit"
+# y/n user confirmation function - will save time instead of re-writing similar gross y/n loops for user input
+# options checker - take a range() of numerical options and make sure user input is within range (for drop-down esque functionality)
+# float checker to ensure a user input is a float
+Matplotlib functions - Maybe put all of these in their own .py to make sure they can work
+# Plot irradiated length against 2theta
+# Plot divergence slit against 2theta
+# Superimpose irradiated footprint on sample x-y
+# Superimpose irradiated depth on sample y-z
+
+General workflow of the code is envisioned to be as follows:
+
+1 User is prompted to select an instrument from a list
+#   Instrument needs x-ray tube information, brand, and model
+#   User selects instrument from "drop-down" list
+#   Else "quit" the program
+2 User is prompted for a configuration
+#   User is presented with the available configurations for the instrument requested
+#   Each piece of information will be mapped to a variable in an instantiated Configuration class
+#   Once all parts of the configuration are input and user confirmed, the this instantiated Configuration class is
+#   passed to the self.gonio class from step 1 as self.configuration
+2.5 User is prompted for optics
+#   Similar to part 2 but the user inputs are "free range" floats
+#   Ultimate output goes to self.optics in the instantiated self.configuration
+3 User is prompted for sample holder information
+#   Similar to above, likely reading from a different CSV based on self.brand (pull only compatible sample holders)
+#   If the sample holder is not available, prompt for shape, x, y, and z dimensions of the sample in specific unit (mm)
+#   This way if the user has a pile of grains on a glass slide they can get some utility
+4 Pull user sample (instantiated DiffractionSample class) and check for z_calculable_boolean
+#   If True, pull the MAC from the sample
+#   Else, skip thickness calc with input sample holder thickness
+5 Perform backend beam profile calculations
+#   This is the math that we need to figure out from reliable sources
+6 Output fours graphs of the x-y plane (two squares on circle) and y-z plane (two squares on square)
+#   If have no idea how we will do this but matplotlib can't be that hard
+#   This will supplant creating warning flags or checking overlap - just an obvious display of "will it fit"
+#   If we want to practice matplotlib conditional formatting we can have it be green and grey if it works and red and grey otherwise
+7 Prompt the user to start again from ideally step 2
+
+References:
+# Slide 13 of https://web.stanford.edu/group/glam/xlab/MatSci162_172/LectureNotes/07_Geometry,%20Detectors.pdf
+# http://pd.chem.ucl.ac.uk/pdnn/inst1/optics1.htm
+# https://imf.ucmerced.edu/sites/g/files/ufvvjh1081/f/page/documents/x-ray_powder_diffraction.pdf
+# https://profex.doebelin.org/wp-content/uploads/2014/02/Lesson-2-Diffractometers-and-Phase-Identification.pdf
