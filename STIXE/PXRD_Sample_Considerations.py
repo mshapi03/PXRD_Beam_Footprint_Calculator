@@ -1,8 +1,7 @@
 # Developed by Mitch S-A
 # Updated on July 14, 2025
-# Cloned from PXRD_Sample_Consideration and removed unnecessary sample density work
 # Usage Notes: Single-human beta test shows no terminal issue. No unit testing performed on individual functions.
-# Status: Functional as a part one, poorly managed git integration
+# Status: Functional as a part one, git integrated
 
 # ---------- Necessary imports ----------
 
@@ -153,7 +152,7 @@ def beam_and_sample_interference(atoms_and_x_ray_energies, incident_energy):
                 warning_counter += 1 # Adds one to the interference counter
     print("{} warning(s) raised.".format(warning_counter))
 
-# ---------- Begin user facing code ----------
+# ---------- Begin User-Facing Code ----------
 
 # Welcome message
 print("""Welcome to the powder XRD beam footprint calculator! This program is designed to help you determine the best

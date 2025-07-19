@@ -11,8 +11,8 @@ It can pass:
 
 BSOC code will need the following imports:
 # class DiffractionSample from PXRD_Sample_Considerations.py
-# csv (probably to read in known goniometers)
-#   Although given the specificity of each gonio/configuration, we may custom write a CSV instead
+# json (probably to read in known goniometers)
+#   Given the specificity of each gonio/configuration, we will write a CSV instead
 #   This can't be automatically generated
 # matplotlib for visualization
 
@@ -36,10 +36,11 @@ BSOC code will need the following classes:
 #   self.monochrom_angle, self.mask, self.i_slit, self.mirror, etc.
 
 BSOC code will need the following functions:
-# "quit" program function to check if user input is "quit"
-# y/n user confirmation function - will save time instead of re-writing similar gross y/n loops for user input
-# options checker - take a range() of numerical options and make sure user input is within range (for drop-down esque functionality)
-# float checker to ensure a user input is a float
+# "quit" program function to check if user input is "quit" - IDK about implementing this, seems like it would be an unnecessary pain
+# COMPLETED
+    # y/n user confirmation function - will save time instead of re-writing similar gross y/n loops for user input
+    # options checker - take a range() of numerical options and make sure user input is within range (for drop-down esque functionality)
+    # float checker to ensure a user input is a float
 Matplotlib functions - Maybe put all of these in their own .py to make sure they can work
 # Plot irradiated length against 2theta
 # Plot divergence slit against 2theta
