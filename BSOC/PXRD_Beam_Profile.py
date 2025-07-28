@@ -1,5 +1,5 @@
 # Developed by Mitch S-A
-# Updated on July 19, 2025
+# Updated on July 28, 2025
 # Usage Notes: Single-human beta test shows no terminal issue. No unit testing performed on individual functions.
 # Status: In-development as a part two, git integrated
 
@@ -7,9 +7,10 @@
 
 # Library to allow code to interface with STIXE script
 import sys
-# import json
-# import matplotlib.pyplot as plt
-# from STIXE.PXRD_Sample_Considerations import DiffractionSample
+# Library to allow code to read and write JSON files
+import json
+# Library to allow code to create and output visualizations
+import matplotlib.pyplot as plt
 
 # ---------- Short Reference Dictionaries and Lists ----------
 
@@ -107,8 +108,10 @@ of the PXRD irradiated length in context of your sample provided details about t
 optics chosen.""")
 
 # Establish variables required for penetration depth calculation locally in this script
+# Float values to be used in the calculation
 x_ray_energy = 0
 sample_MAC = 0
+# Global boolean to reference if thickness calculation should be performed
 thickness_check = False
 
 # Check if STIXE passed incident energy and MAC and store if so
@@ -127,7 +130,7 @@ elif len(sys.argv) == 2:
         sample_MAC = get_user_float("Please enter your estimated sample MAC (cm^2/g):")
         thickness_check = True
 
-# If the script is being run independently, prompt user for MAc and incident energy for thickness calculation
+# If the script is being run independently, prompt user for MAC and incident energy for thickness calculation
 else:
     print("No incident energy or MAC detected.")
     provide_both_estimates = y_or_n_confirmation("Would you like to provide your experiment's incident energy and an estimate of your sample's MAC for an estimated penetration depth calculation?")
@@ -141,10 +144,10 @@ else:
 # Determine the geometry of the experiment - currently only compatible with Bragg-Brentano (BB), a.k.a reflexion.
 geometry = user_pick_from(prompt= "Please select the geometry of the instrument: ", pick_list=["Bragg-Brentano/Reflexion"])
 
-# Consult the "Favorites" JSON and retrieve the details of each saved instrument/configuration with a matching geometry
+# Consult the "Previously_Configured" JSON and retrieve the details of each saved instrument/configuration with a matching geometry
 ### Add code
 
-# Implement pick list function with the "Favorites" list and include an option for "Other"
+# Implement pick list function with the "Previously_Configured" list and include an option for "Other"
 ### Add code
 
 # If user selected a preconfigured instrument (from "Favorites"), the relevant settings will be saved here
