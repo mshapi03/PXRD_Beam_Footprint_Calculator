@@ -93,7 +93,32 @@ def user_pick_from(prompt, pick_list): # Present pick list of choices with custo
 def JSON_reader():
     pass
 
-# Testing Functions
-user_pick_from("Pick a vendor: ", ["Malvern", "Bruker", "Rigaku"])
-
+# Function to calculate incident divergence slit angle from millimeter width
+def DS_phi_from_mm(millimeter):
+    pass
 # ---------- Begin User-Facing Code ----------
+
+# Welcome message and state aim of code.
+print(
+    """Welcome to the beam profile calculator. The aim of this program is to provide simple Matplotlib visualizations
+of the PXRD irradiated length in context of your sample provided details about the instrument, configuration, and 
+optics chosen.""")
+
+# Code checks for the instantiated DiffractionSample object from Pt. 1 and retrieves incident energy (global) and/
+# self.mass_atten_coefficent
+
+
+# Determine the geometry of the experiment - currently only compatible with Bragg-Brentano (BB), a.k.a reflexion.
+geometry = user_pick_from(prompt= "Please select the geometry of the instrument: ", pick_list=["Bragg-Brentano/Reflexion"])
+
+# Consult the "Favorites" JSON and retrieve the details of each saved instrument/configuration with a matching geometry
+### Add code
+
+# Implement pick list function with the "Favorites" list and include an option for "Other"
+### Add code
+
+# If user selected a preconfigured instrument (from "Favorites"), the relevant settings will be saved here
+### Add code
+
+# If the user selected "Other", the following prompts will get all gonio/configuration information required
+### Add code

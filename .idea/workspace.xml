@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Create sufficient plan to develop BSOC">
-      <change afterPath="$PROJECT_DIR$/BSOC/PXRD_Beam_Profile.py" afterDir="false" />
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Create general-use user prompt functions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BSOC/BSOC_code_planning" beforeDir="false" afterPath="$PROJECT_DIR$/BSOC/BSOC_code_planning" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STIXE/PXRD_Sample_Considerations.py" beforeDir="false" afterPath="$PROJECT_DIR$/STIXE/PXRD_Sample_Considerations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSOC/PXRD_Beam_Profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/BSOC/PXRD_Beam_Profile.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,30 +56,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.Absorption_Edge_Reader.executor": "Run",
-    "Python.Atomic_LAC_Reader_and_Lists.executor": "Run",
-    "Python.Density_Calculator.executor": "Run",
-    "Python.Elemental_Densities_CSV_to_JSON.executor": "Run",
-    "Python.MAC_Calculator.executor": "Run",
-    "Python.Main_Beam_Calculator.executor": "Run",
-    "Python.PXRD_Beam_Profile.executor": "Run",
-    "Python.PXRD_Sample_Considerations.executor": "Run",
-    "Python.PXRD_Sample_Considerations_V2.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.Absorption_Edge_Reader.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Atomic_LAC_Reader_and_Lists.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Density_Calculator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Elemental_Densities_CSV_to_JSON.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MAC_Calculator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Main_Beam_Calculator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PXRD_Beam_Profile.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PXRD_Sample_Considerations.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PXRD_Sample_Considerations_V2.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/STIXE" />
@@ -116,7 +114,8 @@
       <workItem from="1752681729930" duration="5780000" />
       <workItem from="1752765114355" duration="2020000" />
       <workItem from="1752851642561" duration="3008000" />
-      <workItem from="1752925198387" duration="4468000" />
+      <workItem from="1752925198387" duration="5703000" />
+      <workItem from="1753292217760" duration="6414000" />
     </task>
     <task id="LOCAL-00001" summary="Commit with July-8 starting progress">
       <option name="closed" value="true" />
@@ -214,7 +213,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752687783671</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Create general-use user prompt functions">
+      <option name="closed" value="true" />
+      <created>1752929736102</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1752929736102</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -244,10 +251,11 @@
     <MESSAGE value="Reorganize and rename files" />
     <MESSAGE value="Move main STIXE script and update README" />
     <MESSAGE value="Create .gitignore to ignore Scrapers" />
-    <option name="LAST_COMMIT_MESSAGE" value="Create .gitignore to ignore Scrapers" />
+    <MESSAGE value="Create general-use user prompt functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Create general-use user prompt functions" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1752929536040" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
+    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753713024483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Density_Calculator.coverage" NAME="Density_Calculator Coverage Results" MODIFIED="1751991123892" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Elemental_Densities_CSV_to_JSON.coverage" NAME="Elemental_Densities_CSV_to_JSON Coverage Results" MODIFIED="1752156797536" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Main_Beam_Calculator.coverage" NAME="Main_Beam_Calculator Coverage Results" MODIFIED="1752193773595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
