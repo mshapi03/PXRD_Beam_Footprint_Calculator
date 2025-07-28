@@ -299,7 +299,7 @@ if user_sample.z_calculable:
     except subprocess.CalledProcessError as e:  # Error handling
         print("An error occurred in calculating the beam profile: {e}".format(e=e))
 
-print("STIXE script finished successfully. Happy experimenting!")
+print("Both scripts completed successfully. Happy experimenting!")
 
 # At this point, this script can pass a:
 #   (class variable) self.stoich - a dictionary of stoichiometry in the form {"Element" : "Atoms/Molecule"}

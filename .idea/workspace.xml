@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add geometry selection and basic code outline">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Enable STIXE to throw to BSOC at specified point">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BSOC/PXRD_Beam_Profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/BSOC/PXRD_Beam_Profile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/STIXE/PXRD_Sample_Considerations.py" beforeDir="false" afterPath="$PROJECT_DIR$/STIXE/PXRD_Sample_Considerations.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -117,7 +116,7 @@
       <workItem from="1752765114355" duration="2020000" />
       <workItem from="1752851642561" duration="3008000" />
       <workItem from="1752925198387" duration="5703000" />
-      <workItem from="1753292217760" duration="10421000" />
+      <workItem from="1753292217760" duration="13031000" />
     </task>
     <task id="LOCAL-00001" summary="Commit with July-8 starting progress">
       <option name="closed" value="true" />
@@ -231,7 +230,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753713659312</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Enable STIXE to throw to BSOC at specified point">
+      <option name="closed" value="true" />
+      <created>1753717971465</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1753717971465</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -263,14 +270,26 @@
     <MESSAGE value="Create .gitignore to ignore Scrapers" />
     <MESSAGE value="Create general-use user prompt functions" />
     <MESSAGE value="Add geometry selection and basic code outline" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add geometry selection and basic code outline" />
+    <MESSAGE value="Enable STIXE to throw to BSOC at specified point" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enable STIXE to throw to BSOC at specified point" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/BSOC/PXRD_Beam_Profile.py</url>
+          <line>144</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753713024483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
+    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753720386948" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Density_Calculator.coverage" NAME="Density_Calculator Coverage Results" MODIFIED="1751991123892" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Elemental_Densities_CSV_to_JSON.coverage" NAME="Elemental_Densities_CSV_to_JSON Coverage Results" MODIFIED="1752156797536" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Main_Beam_Calculator.coverage" NAME="Main_Beam_Calculator Coverage Results" MODIFIED="1752193773595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Sample_Considerations.coverage" NAME="PXRD_Sample_Considerations Coverage Results" MODIFIED="1753717739876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/STIXE" />
+    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Sample_Considerations.coverage" NAME="PXRD_Sample_Considerations Coverage Results" MODIFIED="1753720600954" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/STIXE" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Sample_Considerations_V2.coverage" NAME="PXRD_Sample_Considerations_V2 Coverage Results" MODIFIED="1752686654018" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/STIXE" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Atomic_LAC_Reader_and_Lists.coverage" NAME="Atomic_LAC_Reader_and_Lists Coverage Results" MODIFIED="1752071109669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$MAC_Calculator.coverage" NAME="MAC_Calculator Coverage Results" MODIFIED="1751988401904" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -106,8 +106,37 @@ print(
 of the PXRD irradiated length in context of your sample provided details about the instrument, configuration, and 
 optics chosen.""")
 
-# Code checks for the instantiated DiffractionSample object from Pt. 1 and retrieves incident energy (global) and/
-# self.mass_atten_coefficent
+# Establish variables required for penetration depth calculation locally in this script
+x_ray_energy = 0
+sample_MAC = 0
+thickness_check = False
+
+# Check if STIXE passed incident energy and MAC and store if so
+if len(sys.argv) == 3:
+    print("Your experiment is using {energy} keV incident radiation, and your sample has a MAC of {MAC} cm^2/g.".format( energy=sys.argv[1], MAC=sys.argv[2]))
+    x_ray_energy = float(sys.argv[1])
+    sample_MAC = float(sys.argv[2])
+    thickness_check = True
+
+# If STIXE only passed an incident energy, ask user if they want to provide a MAC for thickness
+elif len(sys.argv) == 2:
+    print("Your experiment is using {energy} keV incident radiation, and your sample's MAC is unknown.".format(energy=sys.argv[1]))
+    x_ray_energy = float(sys.argv[1])
+    provide_MAC_estimate = y_or_n_confirmation("Would you like to provide an estimate of your sample's MAC for an estimated penetration depth calculation?")
+    if provide_MAC_estimate:
+        sample_MAC = get_user_float("Please enter your estimated sample MAC (cm^2/g):")
+        thickness_check = True
+
+# If the script is being run independently, prompt user for MAc and incident energy for thickness calculation
+else:
+    print("No incident energy or MAC detected.")
+    provide_both_estimates = y_or_n_confirmation("Would you like to provide your experiment's incident energy and an estimate of your sample's MAC for an estimated penetration depth calculation?")
+    if provide_both_estimates:
+        x_ray_energy = get_user_float("Please enter your experiment's incident energy (keV):")
+        sample_MAC = get_user_float("Please enter your estimated sample MAC (cm^2/g):")
+        thickness_check = True
+
+# At this point, user has decided whether they want thickness calculated (thickness_check boolean) and provided required values if so
 
 # Determine the geometry of the experiment - currently only compatible with Bragg-Brentano (BB), a.k.a reflexion.
 geometry = user_pick_from(prompt= "Please select the geometry of the instrument: ", pick_list=["Bragg-Brentano/Reflexion"])
