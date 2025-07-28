@@ -7,6 +7,9 @@
 
 # Library to allow code to interface with STIXE script
 import sys
+import pickle
+# Import DiffractionSample class from STIXE script
+from STIXE.PXRD_Sample_Considerations import DiffractionSample
 # Library to allow code to read and write JSON files
 import json
 # Library to allow code to create and output visualizations
@@ -107,39 +110,26 @@ print(
 of the PXRD irradiated length in context of your sample provided details about the instrument, configuration, and 
 optics chosen.""")
 
-# Establish variables required for penetration depth calculation locally in this script
-# Float values to be used in the calculation
-x_ray_energy = 0
-sample_MAC = 0
-# Global boolean to reference if thickness calculation should be performed
-thickness_check = False
+# Receive the user's sample from STIXE code if it exists (i.e. if this script is not run independently)
+if len(sys.argv) > 1: # If the DiffractionSample exists from STIXE
+    hex_serialized_sample = sys.argv[1] # Retrieve the hex string from the command-line arguments
+    serialized_sample = bytes.fromhex(hex_serialized_sample) # Convert the hex string back into bytes
+    reconstructed_sample = pickle.loads(serialized_sample)
+    print(vars(reconstructed_sample)) # Debugging statement to print all attributes of the DiffractionSample object
+else:
+    print("No DiffractionSample object passed. No MAC detected.")
 
-# Check if STIXE passed incident energy and MAC and store if so
-if len(sys.argv) == 3:
-    print("Your experiment is using {energy} keV incident radiation, and your sample has a MAC of {MAC} cm^2/g.".format( energy=sys.argv[1], MAC=sys.argv[2]))
-    x_ray_energy = float(sys.argv[1])
-    sample_MAC = float(sys.argv[2])
-    thickness_check = True
-
-# If STIXE only passed an incident energy, ask user if they want to provide a MAC for thickness
-elif len(sys.argv) == 2:
-    print("Your experiment is using {energy} keV incident radiation, and your sample's MAC is unknown.".format(energy=sys.argv[1]))
-    x_ray_energy = float(sys.argv[1])
-    provide_MAC_estimate = y_or_n_confirmation("Would you like to provide an estimate of your sample's MAC for an estimated penetration depth calculation?")
-    if provide_MAC_estimate:
-        sample_MAC = get_user_float("Please enter your estimated sample MAC (cm^2/g):")
-        thickness_check = True
 
 # If the script is being run independently, prompt user for MAC and incident energy for thickness calculation
-else:
-    print("No incident energy or MAC detected.")
-    provide_both_estimates = y_or_n_confirmation("Would you like to provide your experiment's incident energy and an estimate of your sample's MAC for an estimated penetration depth calculation?")
-    if provide_both_estimates:
-        x_ray_energy = get_user_float("Please enter your experiment's incident energy (keV):")
-        sample_MAC = get_user_float("Please enter your estimated sample MAC (cm^2/g):")
-        thickness_check = True
+# print("No incident energy or MAC detected.")
+# provide_both_estimates = y_or_n_confirmation("Would you like to provide your experiment's incident energy and an estimate of your sample's MAC for an estimated penetration depth calculation?")
+# if provide_both_estimates:
+#     # Instantiate DiffractionSample object by modifying the lines below
+#     x_ray_energy = get_user_float("Please enter your experiment's incident energy (keV):")
+#     sample_MAC = get_user_float("Please enter your estimated sample MAC (cm^2/g):")
+#     thickness_check = True
 
-# At this point, user has decided whether they want thickness calculated (thickness_check boolean) and provided required values if so
+# At this point, a DiffractionSample object exists for the user
 
 # Determine the geometry of the experiment - currently only compatible with Bragg-Brentano (BB), a.k.a reflexion.
 geometry = user_pick_from(prompt= "Please select the geometry of the instrument: ", pick_list=["Bragg-Brentano/Reflexion"])

@@ -13,6 +13,7 @@ import json
 import subprocess
 import sys
 import os
+import pickle
 
 # ---------- Short Reference Dictionaries and Lists ----------
 
@@ -242,20 +243,8 @@ in a value in keV (1-15000): """) # Prompt user for incident energy
         elif radiation_reaffirmation == "n":
             continue  # Throws back to the beginning of the while not energy_input_confirmation loop
 
-# If the sample does not have a calculable MAC, script terminates and BSOC (Pt. 2) begins
-if not user_sample.z_calculable:
-    # Specify the command list to throw to the BSOC script and pass incident energy as string to avoid error
-    command_list = [sys.executable, BSOC_file_path, str(incident_energy)]
-    try:
-        print("Moving to beam shape considerations (part 2)...")
-        subprocess.run(command_list, check=True) # Try to run BSOC script
-        print("Beam profile calculated successfully.") # Message upon successful completion
-    except subprocess.CalledProcessError as e: # Error handling
-        print("An error occurred in calculating the beam profile: {e}".format(e=e))
-
-# Check for sample-beam interactions if atomic libraries were calculated correctly
-
-if user_sample.z_calculable:
+# Begin code block to calculate interferences and MAC if the DiffractionSample instance has z_calculable = True
+if user_sample.z_calculable: # Check for sample-beam interactions if atomic libraries were calculated correctly
     # Auto-check selected incident energy against known fluorescence interferences using beam and sample interference function
     print("Checking for potential undesirable interactions between incident beam and sample...")
     beam_and_sample_interference(sample_x_ray_edges, incident_energy)
@@ -273,10 +262,8 @@ if user_sample.z_calculable:
             interference_y_n_checked = True
         elif manual_interference_checker == "n": # Move on without printing
             interference_y_n_checked = True
-
-# Calculate sample MAC if atomic libraries are generated correctly
-
-if user_sample.z_calculable:
+    # End interference checking code
+    # Calculate sample MAC if atomic libraries are generated correctly
     print("Attempting to calculate the MAC of your sample...")
     # Calculate the sample molecular weight with a class method and atomic info
     user_sample.molecular_weight(sample_atomic_info)
@@ -288,16 +275,22 @@ if user_sample.z_calculable:
     user_sample.calculate_sample_MAC(user_sample.relative_abundance, sample_MAC_dict) # Callable as user_sample.mass_atten_coefficient
     # Confirm success with user as print statement
     print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
+    # End MAC calculation for sample
 
-if user_sample.z_calculable:
-    # Specify the command list to throw to the BSOC script and pass incident energy and MAC as strings to avoid error
-    command_list = [sys.executable, BSOC_file_path, str(incident_energy), str(user_sample.mass_atten_coefficient)]
-    try:
-        print("Moving to beam shape considerations (part 2)...")
-        subprocess.run(command_list, check=True)  # Try to run BSOC script
-        print("Beam profile calculated successfully.")  # Message upon successful completion
-    except subprocess.CalledProcessError as e:  # Error handling
-        print("An error occurred in calculating the beam profile: {e}".format(e=e))
+# Because the DiffractionSample object is not a str or byte, we must use Pickle module to serialize and de-serialize the user's sample
+# Serialize the instance to a byte string
+serialized_sample = pickle.dumps(user_sample)
+# Convert the byte string to a hex string for safe passage as a command-line argument
+hex_serialized_sample = serialized_sample.hex()
+
+# Pass the user's DiffractionSample object to the BSOC (PT. 2) code for beam profile calculation
+command_list = [sys.executable, BSOC_file_path, hex_serialized_sample] # Specify the command list to throw to the BSOC script and pass the user's sample
+try:
+    print("Moving to beam shape considerations (part 2)...")
+    subprocess.run(command_list, check=True)  # Try to run BSOC script
+    print("Beam profile calculated successfully.")  # Message upon successful completion
+except subprocess.CalledProcessError as e:  # Error handling
+    print("An error occurred in calculating the beam profile: {e}".format(e=e))
 
 print("Both scripts completed successfully. Happy experimenting!")
 
