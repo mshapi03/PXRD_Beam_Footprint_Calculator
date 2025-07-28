@@ -16,6 +16,10 @@ during the planning or set-up of a benchtop XRD instrument (like a Malvern Panal
 
 This project aims to address both of these problems in as much breadth as possible to lower the barrier to entry to collecting high-quality diffractograms. 
 
+If you download this repository to your local system for use, it is possible you'll need to edit the lines of code pertaining to os/sys/subprocess in the STIXE script under _Short Reference Dictionaries and Lists_. It should
+be written in a way to avoid this, but if you encounter an error, that would be the first place to check. The approach of breaking this project down into two scripts was in hopes of letting the second portion be used independently 
+of the first while allowing the developer (me) practice having one script throw to another.
+
 ## Sample Thickness and Incident X-Ray Energy (STIXE)
 
 The first question is addressed by the _PXRD_Sample_Considerations.py_ script, located in the _STIXE_ folder. The program takes a user input molecular formula and incident beam energy, and returns the mass attenuation coefficient

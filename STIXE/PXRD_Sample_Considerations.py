@@ -1,17 +1,27 @@
 # Developed by Mitch S-A
-# Updated on July 14, 2025
+# Updated on July 28, 2025
 # Usage Notes: Single-human beta test shows no terminal issue. No unit testing performed on individual functions.
 # Status: Functional as a part one, git integrated
 
 # ---------- Necessary imports ----------
 
+# Library to create stoichiometric dictionary from chemical formula:
 import chemparse
+# Library to read and write json files:
 import json
+# Libraries to enable throwing to BSOC (Pt. 2 of code) when complete
+import subprocess
+import sys
+import os
 
 # ---------- Short Reference Dictionaries and Lists ----------
 
 # Convert Cu, Co, and Mo shorthand to usable keV number:
 Cu_Co_Mo = {"Cu": 8.04, "Co": 6.93, "Mo": 17.479}
+# Construct the file path for BSOC (Part 2) script to throw to once MAC is calculated
+STIXE_file_path = os.path.abspath(sys.argv[0]) # Sample Output: /Users/mitchshapiro-albert/Pycharm_Projects_2025/STIXE/PXRD_Sample_Considerations.py
+STIXE_path_split = STIXE_file_path.split("STIXE", 1) # Sample Output: [/Users/mitchshapiro-albert/Pycharm_Projects_2025/, /PXRD_Sample_Considerations.py]
+BSOC_file_path = STIXE_path_split[0] + str("BSOC/PXRD_Beam_Profile.py") # Sample Output: /Users/mitchshapiro-albert/Pycharm_Projects_2025/BSOC/PXRD_Beam_Profile.py
 
 # ---------- Class Definitions ----------
 
@@ -232,9 +242,16 @@ in a value in keV (1-15000): """) # Prompt user for incident energy
         elif radiation_reaffirmation == "n":
             continue  # Throws back to the beginning of the while not energy_input_confirmation loop
 
-### HERE is where code could:
-#   Terminate this script if user_sample.z_calculable == False
-#   Begin the next script to calculate x-y profile only
+# If the sample does not have a calculable MAC, script terminates and BSOC (Pt. 2) begins
+if not user_sample.z_calculable:
+    # Specify the command list to throw to the BSOC script and pass incident energy as string to avoid error
+    command_list = [sys.executable, BSOC_file_path, str(incident_energy)]
+    try:
+        print("Moving to beam shape considerations (part 2)...")
+        subprocess.run(command_list, check=True) # Try to run BSOC script
+        print("Beam profile calculated successfully.") # Message upon successful completion
+    except subprocess.CalledProcessError as e: # Error handling
+        print("An error occurred in calculating the beam profile: {e}".format(e=e))
 
 # Check for sample-beam interactions if atomic libraries were calculated correctly
 
@@ -272,7 +289,17 @@ if user_sample.z_calculable:
     # Confirm success with user as print statement
     print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
 
-print("Moving to beam shape considerations (part 2)...")
+if user_sample.z_calculable:
+    # Specify the command list to throw to the BSOC script and pass incident energy and MAC as strings to avoid error
+    command_list = [sys.executable, BSOC_file_path, str(incident_energy), str(user_sample.mass_atten_coefficient)]
+    try:
+        print("Moving to beam shape considerations (part 2)...")
+        subprocess.run(command_list, check=True)  # Try to run BSOC script
+        print("Beam profile calculated successfully.")  # Message upon successful completion
+    except subprocess.CalledProcessError as e:  # Error handling
+        print("An error occurred in calculating the beam profile: {e}".format(e=e))
+
+print("STIXE script finished successfully. Happy experimenting!")
 
 # At this point, this script can pass a:
 #   (class variable) self.stoich - a dictionary of stoichiometry in the form {"Element" : "Atoms/Molecule"}

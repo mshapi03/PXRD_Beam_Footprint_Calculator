@@ -5,6 +5,8 @@
 
 # ---------- Necessary imports ----------
 
+# Library to allow code to interface with STIXE script
+import sys
 # import json
 # import matplotlib.pyplot as plt
 # from STIXE.PXRD_Sample_Considerations import DiffractionSample
@@ -106,7 +108,6 @@ optics chosen.""")
 
 # Code checks for the instantiated DiffractionSample object from Pt. 1 and retrieves incident energy (global) and/
 # self.mass_atten_coefficent
-
 
 # Determine the geometry of the experiment - currently only compatible with Bragg-Brentano (BB), a.k.a reflexion.
 geometry = user_pick_from(prompt= "Please select the geometry of the instrument: ", pick_list=["Bragg-Brentano/Reflexion"])
