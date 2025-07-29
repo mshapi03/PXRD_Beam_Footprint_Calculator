@@ -1,5 +1,5 @@
 # Developed by Mitch S-A
-# Updated on July 28, 2025
+# Updated on July 29, 2025
 
 # ---------- Necessary imports ----------
 
@@ -130,10 +130,17 @@ well-matched to the penetration depth of your beam.""")
             print("This program will not consider your sample's thickness.")
             check_thickness = False # Change global boolean to skip thickness calculations/visualizations
     elif throw_to_MAC: # Throw to MAC Calculator
-        bash_command = [sys.executable, "-m", "MAC_Calculator_Directory.MAC_Calculator"]  # Specify the command list to throw to the MAC calculator script
+        Beam_Profile_directory = os.path.dirname(os.path.abspath(__file__)) # Get the absolute path of current script
+        # Build the absolute path to the child script's directory from the current script directory above
+        MAC_Calc_directory = os.path.join(Beam_Profile_directory, "MAC_Calculator_Directory")
+        # Write the bash command to execute when moving to the other script
+        # -m tells to run it with the name __main__
+        # "MAC_Calculator" is the name of the script to run
+        bash_command = [sys.executable, "-m", "MAC_Calculator"]  # Specify the command list to throw to the MAC calculator script
         try:
             print("Moving to MAC Calculator...")
-            subprocess.run(bash_command, check=True)  # Try to run MAC Calculator script
+            # Change the cwd to the directory in which the script lies so MAC_Calculator can find the JSON files
+            subprocess.run(bash_command, cwd=MAC_Calc_directory, check=True)  # Run MAC Calculator script
             print("Sample MAC calculated successfully.")  # Message upon successful completion
         except subprocess.CalledProcessError as e:  # Minimal error handling
             print("An error occurred in calculating the sample MAC: {e}".format(e=e))

@@ -1,5 +1,5 @@
 # Developed by Mitch S-A
-# Updated on July 28, 2025
+# Updated on July 29, 2025
 
 # ---------- Necessary imports ----------
 
@@ -81,7 +81,7 @@ def chem_form_parser(formula):
 def get_atomic_info(stoich_dict):
     atomic_info_dictionary = {}  # Establish desired dictionary as empty
     validated_MAC = True # Create a boolean flag if an unrecognized element is discovered
-    with open("../../JSONs/Element_Information_Dict.json", 'r') as jsonfile:  # Read in .json with necessary information
+    with open("JSONs/Element_Information_Dict.json", 'r') as jsonfile:  # Read in .json with necessary information
         element_data_dict = json.load(jsonfile)
         for element in stoich_dict.keys():  # Pull each unique element from input stoich_dict (e.g "Ca")
             # element_data_dict[element] yields the list of values for that element of the form /
@@ -102,7 +102,7 @@ this calculator can still flag potential beam and sample interferences for 10 < 
 def get_sample_MAC_library(atomic_info, incident_energy):
     sample_MAC_library = {} # Establish empty dictionary to be populated and returned by the function
     incident_energy_num = float(incident_energy) # Make sure function input is a float for math/comparisons later
-    with open("../../JSONs/Atomic_MACs.json", "r") as jsonfile: # Read in .json with necessary information
+    with open("JSONs/Atomic_MACs.json", "r") as jsonfile: # Read in .json with necessary information
         full_LAC_dict = json.load(jsonfile) # Contents of "Atomic_MACs.json" is now callable with Full_LAC_dict variable
         proton_numbers = [] # Establish an empty list to hold Z values of sample elements, used to iterate through .json
         returnable_key_list =[] # Establish an empty list to hold chemical symbol "keys" for final dict
@@ -138,7 +138,7 @@ def get_sample_MAC_library(atomic_info, incident_energy):
 # Generate a dictionary of all x-ray edges for the atoms in the user's sample
 def get_edge_info(stoich_dict):
     sample_x_ray_energy_dictionary ={} # Established desired dictionary as empty
-    with open("../../JSONs/X-ray_Absorption_Edges.json", "r") as jsonfile: # Read in .json with necessary information
+    with open("JSONs/X-ray_Absorption_Edges.json", "r") as jsonfile: # Read in .json with necessary information
         master_x_ray_energy_dict = json.load(jsonfile) # Make JSON file accessible as dictionary
         for element in stoich_dict.keys(): # Iterate through the elements in the user's sample
             try: # Append edge information for elements 11 <= Z <= 92
@@ -189,6 +189,11 @@ def main():
         else:
             continue
 
+    # Establish atomic info library and MAC validity boolean in global scope
+    # This will make sure the code runs properly when MAC_Calculator is run by Beam_Profile_Calculator.py
+    sample_atomic_info = {}
+    user_valid_MAC = True
+
     # Pull dictionary of relevant atomic information based on the user input
     print("Gathering information about the atoms in your sample...")
     try: # Gather info necessary for MAC and thickness calculations
@@ -199,7 +204,7 @@ def main():
         ### Add code here to exit to Beam_Profile_Calculator.py or stop program
 
     # Instantiate SampleChemistry object with element_dict
-    user_sample = SampleChemistry(element_dict, user_valid_MAC)
+    user_sample = SampleChemistry(element_dict, user_valid_MAC) # This is periodically throwing errors?
     print("Sample created.")
 
     # If the user's sample cannot have a MAC calculated for it, inform the global check_thickness boolean

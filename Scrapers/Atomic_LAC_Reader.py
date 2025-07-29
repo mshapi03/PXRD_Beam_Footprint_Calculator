@@ -125,4 +125,5 @@ for z in range(1, 93):
     working_table = get_ascii_table(z)
     energy_mac_dict = html_lac_reader(working_table, z, "r")
     master_z_mac_dict[z] = energy_mac_dict
-simple_json_writer(master_z_mac_dict, "../src/JSONs/Atomic_MACs.json")
+simple_json_writer(master_z_mac_dict,
+                   "../src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/JSONs/Atomic_MACs.json")
