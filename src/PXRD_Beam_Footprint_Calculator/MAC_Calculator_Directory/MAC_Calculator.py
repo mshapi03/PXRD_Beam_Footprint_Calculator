@@ -24,10 +24,10 @@ class SampleChemistry:
         self.stoich = stoich_dict # Stores the stoichiometry of the passed sample, e.g. {"C":1, "O":2} for CO2
         self.valid_MAC = valid_MAC # Boolean to note if the stoich_dict contains Z > 92 (if a valid MAC can be calculated)
 
-    def __repr__(self):
+    def __repr__(self): # Good practice to have a string representation of custom classes, currently unused
         return "A PXRD sample with atoms: " + str(self.stoich)
 
-    def print_all_information(self):
+    def print_all_information(self): # Debugging measure to use to examine what qualities the instantiated SampleChemistry class has at any given point
         print(vars(self))
 
     def molecular_weight(self, atomic_info): # Returns molecular weight float given an atomic info dictionary
@@ -43,11 +43,13 @@ class SampleChemistry:
         return molecular_weight_sum
 
     def get_relative_abundance(self, atomic_info, molecular_weight): # Returns a dict of {"element" : relative abundance}
-        relative_abundance_dictionary = {}
-        for element in self.stoich.keys():
+        relative_abundance_dictionary = {} # Establish empty dictionary
+        for element in self.stoich.keys(): # Iterate through the stoichiometry dictionary
+            # "(Moles of atom X * atomic weight of atom X) / total molecular weight" to give percent abundance in molecule on gram basis
             gram_percent_abundance = (float(self.stoich[element]) * float(atomic_info[element][5])) / molecular_weight
-            relative_abundance_dictionary[element] = gram_percent_abundance
-        self.relative_abundance = relative_abundance_dictionary
+            relative_abundance_dictionary[element] = gram_percent_abundance # Populate previously established dictionary
+        self.relative_abundance = relative_abundance_dictionary # Becomes a callable parameter as it is a quality of the sample
+        # Not returned as it does not need to be accessed outside of class instance object
 
     def calculate_sample_MAC(self, relative_abundance_dict, MAC_dict):
         # "For compounds and mixtures, values for μ/ρ can be obtained by simple additivity
@@ -68,15 +70,16 @@ def chem_form_parser(formula):
         # chemparse.parse_formula returns a dictionary with element counts
         element_counts = chemparse.parse_formula(formula)
         # However, chemparse can't handle non-standard formulas (e.g. 3CaO·Al2O3·CaCO3·11H2O)
-        if len(element_counts) == 0:
+        if len(element_counts) == 0: # If there are no atoms in the dictionary
             print("Could not recognize formula '{}'".format(formula))
             print("""Please ensure your formula is free of the following: \n>> * \n>> ·\n>> sub/superscript formating"
 >> unorthodox chemical notation (e.g. use \"Ca4Al2C3O20H22\" for 3CaO·Al₂O₃·CaCO₃·11H₂O)\n""")
-            return {}
+            return {} # Dictionary stays empty if error is encountered
         return element_counts
-    except Exception as e:
+    except Exception as e: # Default error handling in case an faulty input is not caught by chemparse
         print(f"Error parsing formula: {e}")
         return {}
+
 
 # Generates dictionary of relevant atomic information based on a stoich dictionary from chem_form_parser
 def get_atomic_info(stoich_dict):
@@ -168,12 +171,12 @@ def end_of_script_protocol(value1, value2):
     end_decision = user_pick_from("You have reached the end of the MAC Calculator. Please select an option from below.", ["Quit Program", "Return to Beam Profile Calculator"])
     if end_decision == "Quit Program":
         print("Thank you for using the MAC Calculator!")
-        sys.exit(0)
+        sys.exit(0) # Ends script with standard 0 error
     elif end_decision == "Return to Beam Profile Calculator":
         print("Returning to Beam Profile Calculator!")
         print("Writing JSON files...")
         try:
-            with open("MAC_Calculator_Output.json", "w") as jsonfile:
+            with open("MAC_Calculator_Output.json", "w") as jsonfile: # Writes a JSON file with values passed to constant name
                 json.dump([value1, value2], jsonfile)
             print("JSON file written.")
         except Exception as e:
@@ -190,14 +193,14 @@ def main():
     element_dict = {}
     while not element_dict: # While the dictionary is empty
         chemical_formula = input("Please enter your sample's known or approximate chemical formula: ")
-        element_dict = chem_form_parser(chemical_formula)
+        element_dict = chem_form_parser(chemical_formula) # Try users input in chem_form_parser function
         if element_dict != {}:
-            user_confirmed = False
+            user_confirmed = False # Establish user confirmation boolean
             while not user_confirmed:
-                print("Please confirm the following elemental breakdown: ")
+                print("Please confirm the following elemental breakdown: ") # Re-print user's input for them to visually confirm
                 for key,value in element_dict.items():
                     print(str(key), str(value))
-                user_confirmation = y_or_n_confirmation("Is this correct?")
+                user_confirmation = y_or_n_confirmation("Is this correct?") # Logic loop to either allow them to try again or confirm their answer
                 if user_confirmation:
                     user_confirmed = True
                 elif not user_confirmation:
@@ -252,10 +255,8 @@ tube anode type from below or enter a custom value.""", ["Cu", "Co", "Mo", "Cr",
             print("{}:".format(element))
             for edge in interference_list:
                 print("{edge} edge: {energy} keV, wavelength: {wavelength} angstroms.".format(edge=edge[0], energy=edge[1], wavelength=edge[2]))
-    ### Add code here to exit to Beam_Profile_Calculator.py or stop program
 
-    if check_thickness:
-        # Calculate sample MAC if atomic libraries are generated correctly
+    if check_thickness: # Calculate sample MAC if atomic libraries are generated correctly
         print("Attempting to calculate the MAC of your sample...")
         # Calculate the sample molecular weight with a class method and atomic info
         user_sample.molecular_weight(sample_atomic_info)
@@ -269,6 +270,7 @@ tube anode type from below or enter a custom value.""", ["Cu", "Co", "Mo", "Cr",
         print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
         sample_MAC = user_sample.mass_atten_coefficient
 
+    # Allow the user to decide to end the script or pass thickness boolean and sample MAC back to Beam_Profile_Calculator and resume
     end_of_script_protocol(check_thickness, sample_MAC)
 
 # ---------- Calling the main() Function ----------
