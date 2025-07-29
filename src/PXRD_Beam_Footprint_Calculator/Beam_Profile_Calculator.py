@@ -93,9 +93,25 @@ def user_pick_from(prompt, pick_list): # Present pick list of choices with custo
             continue
     return confirmed_user_choice
 
-# Function to read in JSON files - implement later once we have structured the JSON files
-def JSON_reader():
-    pass
+# Function to delete an existing MAC_Calculator_Output.json (i.e. initialize the program)
+def delete_MAC_output(filepath):
+    if os.path.exists(filepath):
+        try:
+            os.remove(filepath)
+            print("Calculator initialized.")
+        except OSError as e:
+            print("Error initializing calculator: {}".format(e))
+    else:
+        print("No previous output found - calculator initialized.")
+
+# Function to read in MAC_Calculator_Output.json files
+def MAC_Output_Reader(filepath):
+    try:
+        with open(filepath, "r") as jsonfile: # Basic JSON reading
+            MAC_Calc_Output = json.load(jsonfile) # Load the two-item list as a variable
+            return bool(MAC_Calc_Output[0]), float(MAC_Calc_Output[1]) # return both items in bool, float order
+    except Exception as e:
+        print("Error reading MAC calculator output file: {}".format(e))
 
 # ---------- Gonio and Beam Calculation Functions ----------
 
@@ -105,6 +121,15 @@ def DS_phi_from_mm(millimeter):
 # ---------- Begin User-Facing Code ----------
 
 if __name__ == "__main__": # All code must go inside in this block to ensure proper resolving between packages
+
+    # Establish pertinent file paths to ensure successful navigation between scripts
+    Beam_Profile_directory = os.path.dirname(os.path.abspath(__file__))  # Get the absolute path of current script
+    # Build the absolute path to the child script's directory from the current script directory above
+    MAC_Calc_directory = os.path.join(Beam_Profile_directory, "MAC_Calculator_Directory")
+    MAC_Calc_Output = os.path.join(MAC_Calc_directory, "MAC_Calculator_Output.json")
+
+    # Initialize the calculator by making sure there is no previous MAC Calculator Output
+    delete_MAC_output(MAC_Calc_Output)
 
     # Welcome message and state aim of code
     print("""Welcome to the powder XRD beam footprint calculator! This program is designed to help visualize an X-ray
@@ -130,9 +155,6 @@ well-matched to the penetration depth of your beam.""")
             print("This program will not consider your sample's thickness.")
             check_thickness = False # Change global boolean to skip thickness calculations/visualizations
     elif throw_to_MAC: # Throw to MAC Calculator
-        Beam_Profile_directory = os.path.dirname(os.path.abspath(__file__)) # Get the absolute path of current script
-        # Build the absolute path to the child script's directory from the current script directory above
-        MAC_Calc_directory = os.path.join(Beam_Profile_directory, "MAC_Calculator_Directory")
         # Write the bash command to execute when moving to the other script
         # -m tells to run it with the name __main__
         # "MAC_Calculator" is the name of the script to run
@@ -145,7 +167,12 @@ well-matched to the penetration depth of your beam.""")
         except subprocess.CalledProcessError as e:  # Minimal error handling
             print("An error occurred in calculating the sample MAC: {e}".format(e=e))
 
-    # Retrieve the calculated sample MAC and incident energy and use them to instantiate DiffractionSample class here
-    # Then prompt user for information about the sample holder
+    # The script now checks for the existence of MAC_Calculator_Output.json file
+    # If it does not exist, the user has either provided the values or decided against them, or check_thickness and sample_MAC are accurate
+    # If the file does exist, the code below updates the check_thickness and sample_MAC values to that from MAC_Calculator
+    if os.path.exists(MAC_Calc_Output):
+        check_thickness, sample_MAC = MAC_Output_Reader(MAC_Calc_Output)
 
-    # At this point, a DiffractionSample object should exist for the user
+    # At this point, the thickness check boolean and MAC value are updated and usable. Hooray!
+
+    # Now we will prompt the user for information about their sample dimensions and flesh out the DiffractionSample class.

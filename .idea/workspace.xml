@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Pass DiffractionSample object entirely, encounter recursion error">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Fix error throwing to MAC_Calc from BPC">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scrapers/Absorption_Edge_Reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scrapers/Absorption_Edge_Reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scrapers/Atomic_LAC_Reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scrapers/Atomic_LAC_Reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/JSONs/Atomic_MACs.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/JSONs/Atomic_MACs.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/JSONs/Element_Information_Dict.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/JSONs/Element_Information_Dict.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/JSONs/X-ray_Absorption_Edges.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/JSONs/X-ray_Absorption_Edges.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_Calculator.py" afterDir="false" />
     </list>
@@ -270,7 +266,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753732906831</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Fix error throwing to MAC_Calc from BPC">
+      <option name="closed" value="true" />
+      <created>1753802069765</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1753802069765</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -306,7 +310,8 @@
     <MESSAGE value="Complete STIXE and BSOC integration" />
     <MESSAGE value="Revise BSOC code planning" />
     <MESSAGE value="Pass DiffractionSample object entirely, encounter recursion error" />
-    <option name="LAST_COMMIT_MESSAGE" value="Pass DiffractionSample object entirely, encounter recursion error" />
+    <MESSAGE value="Fix error throwing to MAC_Calc from BPC" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix error throwing to MAC_Calc from BPC" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753732345032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
@@ -316,8 +321,8 @@
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Sample_Considerations.coverage" NAME="PXRD_Sample_Considerations Coverage Results" MODIFIED="1753732267493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/STIXE" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Sample_Considerations_V2.coverage" NAME="PXRD_Sample_Considerations_V2 Coverage Results" MODIFIED="1752686654018" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/STIXE" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Atomic_LAC_Reader_and_Lists.coverage" NAME="Atomic_LAC_Reader_and_Lists Coverage Results" MODIFIED="1752071109669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$MAC_Calculator.coverage" NAME="MAC_Calculator Coverage Results" MODIFIED="1753801946109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory" />
+    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$MAC_Calculator.coverage" NAME="MAC_Calculator Coverage Results" MODIFIED="1753805484235" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Absorption_Edge_Reader.coverage" NAME="Absorption_Edge_Reader Coverage Results" MODIFIED="1752498806185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Beam_Profile_Calculator.coverage" NAME="Beam_Profile_Calculator Coverage Results" MODIFIED="1753801742579" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator" />
+    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Beam_Profile_Calculator.coverage" NAME="Beam_Profile_Calculator Coverage Results" MODIFIED="1753805540999" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator" />
   </component>
 </project>

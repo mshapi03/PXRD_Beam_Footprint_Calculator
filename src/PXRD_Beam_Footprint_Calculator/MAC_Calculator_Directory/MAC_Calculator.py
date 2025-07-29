@@ -10,6 +10,7 @@ import chemparse
 # Library to read and write JSON files:
 import json
 # Libraries to enable passing variables between Python scripts
+import sys
 
 # ---------- Short Reference Dictionaries and Lists ----------
 
@@ -162,6 +163,22 @@ def beam_and_sample_interference(atoms_and_x_ray_energies, incident_energy):
                 warning_counter += 1 # Adds one to the interference counter
     print("{} warning(s) raised.".format(warning_counter))
 
+# Prompt user to either exit the program or pass values back to Beam_Profile_Calculator
+def end_of_script_protocol(value1, value2):
+    end_decision = user_pick_from("You have reached the end of the MAC Calculator. Please select an option from below.", ["Quit Program", "Return to Beam Profile Calculator"])
+    if end_decision == "Quit Program":
+        print("Thank you for using the MAC Calculator!")
+        sys.exit(0)
+    elif end_decision == "Return to Beam Profile Calculator":
+        print("Returning to Beam Profile Calculator!")
+        print("Writing JSON files...")
+        try:
+            with open("MAC_Calculator_Output.json", "w") as jsonfile:
+                json.dump([value1, value2], jsonfile)
+            print("JSON file written.")
+        except Exception as e:
+            print("An unexpected error occurred: {}".format(e))
+
 # ---------- Begin Main Logic of the Code as Callable Function main() ----------
 
 def main():
@@ -251,7 +268,8 @@ tube anode type from below or enter a custom value.""", ["Cu", "Co", "Mo", "Cr",
         # Confirm success with user as print statement
         print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
         sample_MAC = user_sample.mass_atten_coefficient
-        # End MAC calculation for sample
+
+    end_of_script_protocol(check_thickness, sample_MAC)
 
 # ---------- Calling the main() Function ----------
 
