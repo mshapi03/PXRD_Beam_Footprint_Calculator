@@ -1,21 +1,5 @@
 Updated July 28, 2025
 
-PXRD_Sample_Considerations.py is the main script of STIXE
-It can pass:
-#   (class variable) self.stoich - a dictionary of stoichiometry in the form {"Element" : "Atoms/Molecule"}
-#   (global variable) The incident energy the user identified (incident_energy)
-# Additionally, if the z_calculable is true (all elements Z > 92) you can pass:
-#   (cv) self.molecular_weight_value - the molecular weight of the sample
-#   (cv) self.relative_abundance - a dictionary of {"element" : relative abundance}
-#   (cv) self.mass_atten_coefficient - the MAC of the sample for the incident energy the user identified
-#   (gv) A dictionary of the elemental MACs for the user identified energy (pre-weighted sum)
-#   (gv) A dictionary of the elemental absorption edges for the atoms in the sample
-
-Only MAC and incident energy are needed for z calc. No others are passed. If additional things need to be passed, they
-must come from updating the STIXE code blocks involving os/sys code.
-
-BSOC imports are managed.
-
 BSOC code classes:
 
 Instrument - self.brand, self.model, self.gonio
@@ -46,6 +30,7 @@ Optics - numerical details about configuration
 # self.monochrom_angle and self.mirror would expand capabilities to monochromators and mirror focusing
 
 SampleHolder class - numerical details about the sample
+# self.MAC
 # self.shape - either ["Circular", "Square", "Rectangular"]
 # Then depending on the shape:
 # self.diameter for circular
@@ -62,7 +47,7 @@ BSOC code will need the following Matplotlib functions:
 
 General workflow of the code is envisioned to be as follows:
 
-### Add here after revising MAC passing to BSOC
+### Add here after completing restructures
 
 References:
 # Slide 13 of https://web.stanford.edu/group/glam/xlab/MatSci162_172/LectureNotes/07_Geometry,%20Detectors.pdf

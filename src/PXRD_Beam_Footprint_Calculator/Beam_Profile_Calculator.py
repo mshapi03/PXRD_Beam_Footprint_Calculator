@@ -1,27 +1,25 @@
 # Developed by Mitch S-A
 # Updated on July 28, 2025
-# Usage Notes: Single-human beta test shows no terminal issue. No unit testing performed on individual functions.
-# Status: In-development as a part two, git integrated
 
 # ---------- Necessary imports ----------
 
-# Library to allow code to interface with STIXE script
+# Library to allow code to interface with other Python scripts
 import sys
-import pickle
-# Import DiffractionSample class from STIXE script
-from STIXE.PXRD_Sample_Considerations import DiffractionSample
+import subprocess
+import os
 # Library to allow code to read and write JSON files
 import json
 # Library to allow code to create and output visualizations
-import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 # ---------- Short Reference Dictionaries and Lists ----------
 
 
 
 # ---------- Class Definitions ----------
-
-
+class DiffractionSample:
+    def __init__(self, x, y, z):
+        pass
 
 # ---------- Simplifying Functions ----------
 
@@ -99,49 +97,48 @@ def user_pick_from(prompt, pick_list): # Present pick list of choices with custo
 def JSON_reader():
     pass
 
+# ---------- Gonio and Beam Calculation Functions ----------
+
 # Function to calculate incident divergence slit angle from millimeter width
 def DS_phi_from_mm(millimeter):
     pass
 # ---------- Begin User-Facing Code ----------
 
-# Welcome message and state aim of code.
-print(
-    """Welcome to the beam profile calculator. The aim of this program is to provide simple Matplotlib visualizations
-of the PXRD irradiated length in context of your sample provided details about the instrument, configuration, and 
-optics chosen.""")
+if __name__ == "__main__": # All code must go inside in this block to ensure proper resolving between packages
 
-# Receive the user's sample from STIXE code if it exists (i.e. if this script is not run independently)
-if len(sys.argv) > 1: # If the DiffractionSample exists from STIXE
-    hex_serialized_sample = sys.argv[1] # Retrieve the hex string from the command-line arguments
-    serialized_sample = bytes.fromhex(hex_serialized_sample) # Convert the hex string back into bytes
-    reconstructed_sample = pickle.loads(serialized_sample)
-    print(vars(reconstructed_sample)) # Debugging statement to print all attributes of the DiffractionSample object
-else:
-    print("No DiffractionSample object passed. No MAC detected.")
+    # Welcome message and state aim of code
+    print("""Welcome to the powder XRD beam footprint calculator! This program is designed to help visualize an X-ray
+beam's profile on a powder diffraction sample. I hope it will help you determine the best optics settings for your 
+sample, sample holder, and diffractometer when collecting powder X-ray diffraction data.\n""")
 
+    # Establish global boolean for checking sample thickness via MAC
+    check_thickness = True
+    sample_MAC = 0
 
-# If the script is being run independently, prompt user for MAC and incident energy for thickness calculation
-# print("No incident energy or MAC detected.")
-# provide_both_estimates = y_or_n_confirmation("Would you like to provide your experiment's incident energy and an estimate of your sample's MAC for an estimated penetration depth calculation?")
-# if provide_both_estimates:
-#     # Instantiate DiffractionSample object by modifying the lines below
-#     x_ray_energy = get_user_float("Please enter your experiment's incident energy (keV):")
-#     sample_MAC = get_user_float("Please enter your estimated sample MAC (cm^2/g):")
-#     thickness_check = True
+    # Prompt the user to engage with the MAC_Calculator
+    print("""This program has the capability to determine your sample's mass attenuation coefficient (MAC) if you (1) know 
+the incident radiation energy (or tube anode material) you will be using and (2) are gathering data on a sample which
+does not contain any elements above atomic number (Z) 92. This enables the program to ensure your sample thickness is 
+well-matched to the penetration depth of your beam.""")
+    throw_to_MAC = y_or_n_confirmation("Would you like to calculate your samples MAC?")
+    if not throw_to_MAC: # Do not throw to MAC_Calculator
+        estimate_MAC = y_or_n_confirmation("Would you like to provide an estimate of your sample's MAC?")
+        if estimate_MAC: # Provide an estimate of MAC
+            user_input_MAC = get_user_float("Please enter the MAC of your sample (cm^2/g):")
+            sample_MAC = float(user_input_MAC)
+        elif not estimate_MAC: # Forgo sample thickness calculations
+            print("This program will not consider your sample's thickness.")
+            check_thickness = False # Change global boolean to skip thickness calculations/visualizations
+    elif throw_to_MAC: # Throw to MAC Calculator
+        bash_command = [sys.executable, "-m", "MAC_Calculator_Directory.MAC_Calculator"]  # Specify the command list to throw to the MAC calculator script
+        try:
+            print("Moving to MAC Calculator...")
+            subprocess.run(bash_command, check=True)  # Try to run MAC Calculator script
+            print("Sample MAC calculated successfully.")  # Message upon successful completion
+        except subprocess.CalledProcessError as e:  # Minimal error handling
+            print("An error occurred in calculating the sample MAC: {e}".format(e=e))
 
-# At this point, a DiffractionSample object exists for the user
+    # Retrieve the calculated sample MAC and incident energy and use them to instantiate DiffractionSample class here
+    # Then prompt user for information about the sample holder
 
-# Determine the geometry of the experiment - currently only compatible with Bragg-Brentano (BB), a.k.a reflexion.
-geometry = user_pick_from(prompt= "Please select the geometry of the instrument: ", pick_list=["Bragg-Brentano/Reflexion"])
-
-# Consult the "Previously_Configured" JSON and retrieve the details of each saved instrument/configuration with a matching geometry
-### Add code
-
-# Implement pick list function with the "Previously_Configured" list and include an option for "Other"
-### Add code
-
-# If user selected a preconfigured instrument (from "Favorites"), the relevant settings will be saved here
-### Add code
-
-# If the user selected "Other", the following prompts will get all gonio/configuration information required
-### Add code
+    # At this point, a DiffractionSample object should exist for the user
