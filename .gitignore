@@ -5,3 +5,6 @@ Scrapers/
 
 # Ignore MAC_Calculator_Output as it will constantly be changing
 src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_Calculator_Output.json
+
+# Ignore the Profile_Calculator_Planning txt file
+Profile_Calculator_Planning
