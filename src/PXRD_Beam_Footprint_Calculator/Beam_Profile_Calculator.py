@@ -305,7 +305,7 @@ well-matched to the penetration depth of your beam.""")
     # Prompt the user for information about their sample dimensions and flesh out the DiffractionSample class.
     user_holder = None # Establish variable on global scale
     user_holder_information = [] # Establish empty list on global scale
-    if user_manufacturer != "Other": # As long as the manufacturer is known
+    if user_manufacturer in manufacturers_sampleholders.keys(): # If the manufacturer exists in the manufacturers_and_sample_holders.json
         try: # Add error handling if a manufacturer model exists without any sample holders
             known_compatible_sample_holders = manufacturers_sampleholders[user_manufacturer] # Access list of lists (sample holders) for specified manufacturer
             sample_holder_names = [holder[0] for holder in known_compatible_sample_holders] # List comprehension to generate all holder names
@@ -317,7 +317,7 @@ well-matched to the penetration depth of your beam.""")
                         break
         except Exception as e:
             user_holder = "Other" # Force the user to input sample information as we have no known samples for that manufacturer
-    if user_manufacturer == "Other" or user_holder == "Other": # Throw here if user_manufacturer is "Other" or user_holder is "Other" after above test
+    if user_manufacturer not in manufacturers_sampleholders.keys() or user_holder == "Other": # Throw here if user_manufacturer does not exist in the manufacturers_and_sample_holders.json or user_holder is "Other" after above test
         user_holder = "Custom" # Mark the name of this hold as a custom input from the user
         user_holder_information.append(user_holder) # Append this to user_holder_information list to keep standard formatting
         # Populate user_holder_information with custom user inputs
@@ -344,16 +344,14 @@ well-matched to the penetration depth of your beam.""")
 
     print("Sample information stored.")
 
-    # If the user's sample is of a known manufacturer, ask if they'd like to store the sample for future use
+    # If the user's sample is custom entered and they have not previously decided against storing the manufacturer, ask if they'd like to store the sample for future use
+    # Do not reference save_new_manu_instr boolean, since it will be False if the manufacturer and instrument already exist!
     if user_holder_information[0] == "Custom" and user_manufacturer != "Other":
         update_sampleholder_JSON = y_or_n_confirmation("Would you like to save your custom sample holder for future use under the {} brand?".format(user_manufacturer))
         if update_sampleholder_JSON:
+            save_new_manu_sample = True
             user_holder_name = get_user_string("Please name your custom sample holder:", 12)
-            user_holder_information[0] = user_holder_name # Update the user holder name to be "User input"
-            ### Implement function once reference dictionaries are MAC_JSONs.
-            ### Note that the function needs to handle cases where the manufacturer key already exists (Malvern) and cases where it does not (Thermo)!
-            print("The following will be added as a sample to the JSON file:")
-            #print("The manufacturers_sampleholders dictionary has been updated.")
+            user_holder_information[0] = user_holder_name # Update the user holder name to be the user input from above
 
     # Instantiate the DiffractionSample object with known information
     if len(user_holder_information) == 5: # If the holder is circular
@@ -371,8 +369,10 @@ well-matched to the penetration depth of your beam.""")
         print("There was some issue in creating your sample - please restart the program.")
         raise TypeError("user_holder_information should have length 5 or 6 for proper instantiation of the DiffractionSample class.")
 
+
     print(user_diffraction_sample)
     user_diffraction_sample.print_all_information()
+    print(save_new_manu_sample)
 
     # Get Goniometer radius
     # print("You are using a/an {instrument} diffractometer from the vendor \"{manufacturer}\".").format(instrument=user_instrument, manufacturer=user_manufacturer)
@@ -382,5 +382,10 @@ well-matched to the penetration depth of your beam.""")
     #     print("The goniometer radius is {radius} mm.".format(radius=user_gonio_radius))
     # elif user_instrument not in instruments_gonio_radii.keys():
     #     user_gonio_radius = get_user_float("Please input the radius of your goniometer in mm:")
+
+    ### Now that all required JSONs have been referenced, update them if user requested
+    ### Note that the function needs to handle cases where the manufacturer key already exists (Malvern) and cases where it does not (Thermo)!
+    print("The following will be added as a sample to the JSON file:")
+    # print("The manufacturers_sampleholders dictionary has been updated.")
 
 
