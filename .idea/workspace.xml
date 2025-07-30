@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Convert python dictionaries to imported JSONs">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Update .gitignore">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -356,7 +357,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753907481259</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Update .gitignore">
+      <option name="closed" value="true" />
+      <created>1753907544279</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1753907544279</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -391,7 +400,6 @@
     <MESSAGE value="Pass DiffractionSample object entirely, encounter recursion error" />
     <MESSAGE value="Fix error throwing to MAC_Calc from BPC" />
     <MESSAGE value="Enable passing of z_calc bool and MAC between programs and complete restructure" />
-    <MESSAGE value="Update .gitignore" />
     <MESSAGE value="Finish commenting MAC_Calculator" />
     <MESSAGE value="Add manufacturer instrument/sample libraries and othering function" />
     <MESSAGE value="Add sample information logic, pre-instantiating sample holder class" />
@@ -399,15 +407,16 @@
     <MESSAGE value="Fix minor errors when manufacturer model exists without sample holders" />
     <MESSAGE value="Fix error which allows MAC_Calculator to terminate without usable MAC andtrue thickness check" />
     <MESSAGE value="Convert python dictionaries to imported JSONs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Convert python dictionaries to imported JSONs" />
+    <MESSAGE value="Update .gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update .gitignore" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py</url>
-          <line>227</line>
-          <option name="timeStamp" value="18" />
+          <line>287</line>
+          <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

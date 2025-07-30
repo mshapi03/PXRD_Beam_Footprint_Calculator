@@ -185,7 +185,6 @@ def load_preconfiguration(filepath):
     except Exception as e:
         print("Error loading preconfiguration file: {}".format(e))
 
-### Functions to read and update MAC_JSONs will go here once bulk of the code is tested
 
 
 # ---------- Gonio and Beam Calculation Functions ----------
@@ -197,14 +196,15 @@ def DS_phi_from_mm(millimeter):
 
 if __name__ == "__main__": # All code must go inside in this block to ensure proper resolving between packages
 
-    # Establish pertinent file paths to ensure successful navigation between scripts
-    Beam_Profile_directory = os.path.dirname(os.path.abspath(__file__))  # Get the absolute path to the directory of the current script (PXRD_Beam_Footprint_Calculator)
+    # Establish pertinent file paths to ensure successful navigation between scripts and JSON loading
+    # Get the absolute path to the directory of the current script (PXRD_Beam_Footprint_Calculator, for global reference)
+    Beam_Profile_directory = os.path.dirname(os.path.abspath(__file__)) #PXRD_Beam_Footprint_Calculator
     # Build the absolute path to the child script's directory from the directory above (for MAC_JSONs)
     MAC_Calc_directory = os.path.join(Beam_Profile_directory, "MAC_Calculator_Directory") # MAC_Calculator_Directory
     # Build the absolute path to the child script's JSON output in the directory above (for MAC_JSONs)
     MAC_Calc_Output = os.path.join(MAC_Calc_directory, "MAC_Calculator_Output.json") # MAC_Calculator_Directory
     # Build absolute path to the directory containing preconfiguration JSONs (for Beam_Calculation)
-    Beam_Calc_J_directory = os.path.join(Beam_Profile_directory, "Beam_Calc_JSONs")
+    Beam_Calc_J_directory = os.path.join(Beam_Profile_directory, "Beam_Calc_JSONs") # Beam_Calc_JSONs
 
     # Initialize the calculator by making sure there is no previous MAC Calculator Output
     delete_MAC_output(MAC_Calc_Output)
@@ -213,16 +213,11 @@ if __name__ == "__main__": # All code must go inside in this block to ensure pro
     # General form: manufacturers_models = {"Rigaku": ["SmartLab", "SmartLab SE", "MiniFlex", "MiniFlex XpC"],
     manufacturers_models = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "manufacturers_and_models.json"))
     # General form: ["Name", "Circle", diameter, depth, min_2theta] or ["Name" "Rectangle", axial dimension, equitorial dimension, depth, min_2theta] with values in mm
-    # Note that axial is the length of sample well along the beam direction, equitorial is the width of the sample orthogonal to beam direction
-    # {"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0.2, 0], ["Glass 0.5mm", "Rectangle", 15, 15, 0.5, 0], etc.
+        # {"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0.2, 0], ["Glass 0.5mm", "Rectangle", 15, 15, 0.5, 0], etc.
+        # Note that axial is the length of sample well along the beam direction, equitorial is the width of the sample orthogonal to beam direction
     manufacturers_sampleholders = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "manufacturers_and_sample_holders.json"))
     # General form: {"X'Pert^3": 240, "X'Pert Pro": 240} with values in mm
     instruments_gonio_radii = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "instruments_and_radii.json"))
-
-    # Debug/test
-    print(manufacturers_models)
-    print(manufacturers_sampleholders)
-    print(instruments_gonio_radii)
 
     # Welcome message and state aim of code
     print("""Welcome to the powder XRD beam footprint calculator! This program is designed to help visualize an X-ray
@@ -266,20 +261,28 @@ well-matched to the penetration depth of your beam.""")
     # If the file does exist, the code below updates the check_thickness and sample_MAC values to that from MAC_Calculator
     if os.path.exists(MAC_Calc_Output):
         check_thickness, sample_MAC = MAC_Output_Reader(MAC_Calc_Output)
-
     # At this point, the thickness check boolean and MAC value are updated and usable.
-    # Prompt user for brand and instrument they are using:
+
+    # Prompt user for brand of instrument they are using:
     user_manufacturer = user_pick_from("Please select the manufacturer of your XRD unit from the following:", othering(manufacturers_models.keys()))
+    if user_manufacturer == "Other":
+        user_manufacturer = get_user_string("Please enter the manufacturer of your XRD unit:")
+    # user_manufacturer is no longer other, but is accurate. May or not exist in dictionaries
 
-    ### Need to update here to prompt for user input manufacturers, and then change all logic through line 335
-    ### Update to be JSON files and revise the .gitignore
-
-    # If the user_manufacturer is known, prompt the user for the instrument type
+    # Prompt the user for the instrument they are using:
     user_instrument = None # Establish variable on global scale
-    if user_manufacturer != "Other":
+    # If the user_manufacturer is already present in manufacturers_and_models preconfiguration, start by picking from that list
+    try:
         user_instrument = user_pick_from("Please select the instrument you are using from the following:", othering(manufacturers_models[user_manufacturer]))
-    else:
+    except KeyError: # If the user_manufacturer does not exist, it will throw a KeyError
         user_instrument = get_user_string("Please write the name of the instrument you are using:", 20)
+    finally: # If the manufacturer is known but the instrument is not (i.e. user_instrument == "Other"), have user put in their instrument
+        if user_instrument == "Other":
+            user_instrument = get_user_string("Please write the name of the instrument you are using:", 20)
+
+    #  Debug/test
+    print(user_manufacturer)
+    print(user_instrument)
 
     # Prompt the user for information about their sample dimensions and flesh out the DiffractionSample class.
     user_holder = None # Establish variable on global scale
