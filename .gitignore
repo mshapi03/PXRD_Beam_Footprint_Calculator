@@ -10,4 +10,4 @@ src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_Calculator_Outpu
 Profile_Calculator_Planning
 
 # Ignore updates and revisions to Beam_Calculator presets
-# src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs
+src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs
