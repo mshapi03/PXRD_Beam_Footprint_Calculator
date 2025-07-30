@@ -17,35 +17,6 @@ import matplotlib as mpl
 # Simple list of holder shapes to more easily expand code applicability in the future
 holder_shapes = ["Circle", "Rectangle"]
 
-### The lists below will become MAC_JSONs once the bulk of the code has been tested to work!
-# The lists below will hold presets from Malvern and Rigaku since the developer uses those, but can be updated to hold any values!
-
-# XRD Manufacturers and Models Dictionary
-manufacturers_models = {"Rigaku": ["SmartLab", "SmartLab SE", "MiniFlex", "MiniFlex XpC"],
-                        "Malvern Panalytical": ["Aeris", "CubiX 3", "Empyrean", "X'Pert^3", "X'Pert Pro"],
-                        "Bruker": ["D8 DISCOVER", "D8 ADVANCE", "D6 PHASER", "D2 PHASER", "D8 ENDEAVOR"],
-                        "Thermo Fisher": ["ARL X'TRA", "ARL EQUINOX 100"],
-                        "Proto": ["AXRD Benchtop", "AXRD Theta-Theta", "AXRD LPD", "AXRD LPD-HR", "AXRD LPD-HT"]}
-
-# XRD Brands as keys with a list of lists as values, holding known compatible sample holders in the general form:
-# ["Name", "Circle", diameter, depth, min_2theta] or ["Name" "Rectangle", axial dimension, equitorial dimension, depth, min_2theta] with values in mm
-# Note that axial is the length of sample well along the beam direction, equitorial is the width of the sample orthogonal to beam direction
-manufacturers_sampleholders = {"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0.2, 0],
-                                          ["Glass 0.5mm", "Rectangle", 15, 15, 0.5, 0],
-                                          ["ZDS 5x0.2 mm", "Circle", 5, 0.2, 0],
-                                          ["ASC 2mm", "Circle", 30, 2, 0],
-                                          ["ASC 0.5mm", "Circle", 30, 0.5, 0],
-                                          ["ASC 0.2mm", "Circle", 30, 0.2, 0]],
-                               # Rigaku sample holder info was found from resources online - check with your sample holders before using!
-                               "Malvern Panalytical": [["Reg 16mm", "Circle", 16, 2.4, 0],
-                                                       ["Reg 27mm", "Circle", 27, 2.4, 0],
-                                                       ["Si Substrate", "Circle", 15, 0.2, 0]]}
-                               # I ignored the 26, 32, and 40 mm spring-loaded sample holders since thickness varies
-
-# Known XRD Instruments with their goniometer radii
-instruments_gonio_radii = {"X'Pert^3": 240, "X'Pert Pro": 240}
-
-
 # ---------- Class Definitions ----------
 class DiffractionSample:
     def __init__(self, name, shape, z_check, diameter= 0, axi = 0, equi = 0, MAC = 0, depth = 0, min_2theta = 0):
@@ -205,6 +176,15 @@ def othering(my_list):
     list_to_return.append("Other") # Add "Other" as option
     return list_to_return # Return list\
 
+# Function to read in Beam_Calc_JSONs as usable dictionaries of preconfigurations in the script
+def load_preconfiguration(filepath):
+    try:
+        with open(filepath, "r") as jsonfile:
+            preconfig_dict = json.load(jsonfile)
+            return preconfig_dict
+    except Exception as e:
+        print("Error loading preconfiguration file: {}".format(e))
+
 ### Functions to read and update MAC_JSONs will go here once bulk of the code is tested
 
 
@@ -218,13 +198,31 @@ def DS_phi_from_mm(millimeter):
 if __name__ == "__main__": # All code must go inside in this block to ensure proper resolving between packages
 
     # Establish pertinent file paths to ensure successful navigation between scripts
-    Beam_Profile_directory = os.path.dirname(os.path.abspath(__file__))  # Get the absolute path of current script
-    # Build the absolute path to the child script's directory from the current script directory above
-    MAC_Calc_directory = os.path.join(Beam_Profile_directory, "MAC_Calculator_Directory")
-    MAC_Calc_Output = os.path.join(MAC_Calc_directory, "MAC_Calculator_Output.json")
+    Beam_Profile_directory = os.path.dirname(os.path.abspath(__file__))  # Get the absolute path to the directory of the current script (PXRD_Beam_Footprint_Calculator)
+    # Build the absolute path to the child script's directory from the directory above (for MAC_JSONs)
+    MAC_Calc_directory = os.path.join(Beam_Profile_directory, "MAC_Calculator_Directory") # MAC_Calculator_Directory
+    # Build the absolute path to the child script's JSON output in the directory above (for MAC_JSONs)
+    MAC_Calc_Output = os.path.join(MAC_Calc_directory, "MAC_Calculator_Output.json") # MAC_Calculator_Directory
+    # Build absolute path to the directory containing preconfiguration JSONs (for Beam_Calculation)
+    Beam_Calc_J_directory = os.path.join(Beam_Profile_directory, "Beam_Calc_JSONs")
 
     # Initialize the calculator by making sure there is no previous MAC Calculator Output
     delete_MAC_output(MAC_Calc_Output)
+
+    # Build pre-configured dictionaries from JSON files
+    # General form: manufacturers_models = {"Rigaku": ["SmartLab", "SmartLab SE", "MiniFlex", "MiniFlex XpC"],
+    manufacturers_models = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "manufacturers_and_models.json"))
+    # General form: ["Name", "Circle", diameter, depth, min_2theta] or ["Name" "Rectangle", axial dimension, equitorial dimension, depth, min_2theta] with values in mm
+    # Note that axial is the length of sample well along the beam direction, equitorial is the width of the sample orthogonal to beam direction
+    # {"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0.2, 0], ["Glass 0.5mm", "Rectangle", 15, 15, 0.5, 0], etc.
+    manufacturers_sampleholders = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "manufacturers_and_sample_holders.json"))
+    # General form: {"X'Pert^3": 240, "X'Pert Pro": 240} with values in mm
+    instruments_gonio_radii = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "instruments_and_radii.json"))
+
+    # Debug/test
+    print(manufacturers_models)
+    print(manufacturers_sampleholders)
+    print(instruments_gonio_radii)
 
     # Welcome message and state aim of code
     print("""Welcome to the powder XRD beam footprint calculator! This program is designed to help visualize an X-ray
