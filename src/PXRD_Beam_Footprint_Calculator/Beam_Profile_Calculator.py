@@ -13,7 +13,29 @@ import json
 import matplotlib as mpl
 
 # ---------- Short Reference Dictionaries and Lists ----------
+# The lists below will hold presets from Malvern and Rigaku since the developer uses those, but can be updated to hold any values!
 
+# XRD Manufacturers and Models Dictionary
+manufacturers_models = {"Rigaku": ["SmartLab", "SmartLab SE", "MiniFlex", "MiniFlex XpC"],
+                        "Malvern Panalytical": ["Aeris", "CubiX 3", "Empyrean", "X'Pert^3", "X'Pert Pro"]}
+                        # "Bruker": ["D8 DISCOVER", "D8 ADVANCE", "D6 PHASER", "D2 PHASER", "D8 ENDEAVOR"],
+                        # "Thermo Fisher": ["ARL X'TRA", "ARL EQUINOX 100"],
+                        # "Proto": ["AXRD Benchtop", "AXRD Theta-Theta", "AXRD LPD", "AXRD LPD-HR", "AXRD LPD-HT"]
+
+# XRD Brands as keys with a list of lists as values, holding known compatible sample holders in the general form:
+# ["Name", "Circle", diameter, depth, min_2theta] or ["Name" "Rectangle", axial dimension, equitorial dimension, depth, min_2theta] with values in mm
+# Note that axial is the length of sample well along the beam direction, equitorial is the width of the sample orthogonal to beam direction
+manufacturers_sampleholders = {"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0.2, 0],
+                                          ["Glass 0.5mm", "Rectangle", 15, 15, 0.5, 0],
+                                          ["ZDS 5x0.2 mm", "Circle", 5, 0.2, 0],
+                                          ["ASC 2mm", "Circle", 30, 2, 0],
+                                          ["ASC 0.5mm", "Circle", 30, 0.5, 0],
+                                          ["ASC 0.2mm", "Circle", 30, 0.2, 0]],
+                               # Rigaku sample holder info was found from resources online - check with your sample holders before using!
+                               "Malvern Panalytical": [["Reg 16mm", "Circle", 16, 2.4, 0],
+                                                       ["Reg 27mm", "Circle", 27, 2.4, 0],
+                                                       ["Si Substrate", "Circle", 15, 0.2, 0]]}
+                               # I ignored the 26, 32, and 40 mm spring-loaded sample holders since thickness varies
 
 
 # ---------- Class Definitions ----------
@@ -113,6 +135,13 @@ def MAC_Output_Reader(filepath):
     except Exception as e:
         print("Error reading MAC calculator output file: {}".format(e))
 
+# Function to take a dictionary and return a list of keys plus the "Other" keyword
+def othering(my_dict):
+    list_to_return = list(my_dict.keys())
+    list_to_return.append("Other")
+    return list_to_return
+
+
 # ---------- Gonio and Beam Calculation Functions ----------
 
 # Function to calculate incident divergence slit angle from millimeter width
@@ -173,6 +202,9 @@ well-matched to the penetration depth of your beam.""")
     if os.path.exists(MAC_Calc_Output):
         check_thickness, sample_MAC = MAC_Output_Reader(MAC_Calc_Output)
 
-    # At this point, the thickness check boolean and MAC value are updated and usable. Hooray!
+    # At this point, the thickness check boolean and MAC value are updated and usable.
+    # Prompt user for brand and instrument they are using:
+
+    user_manufacturer = user_pick_from("Please select the manufacturer of your XRD unit from the following:", othering(manufacturers_models))
 
     # Now we will prompt the user for information about their sample dimensions and flesh out the DiffractionSample class.
