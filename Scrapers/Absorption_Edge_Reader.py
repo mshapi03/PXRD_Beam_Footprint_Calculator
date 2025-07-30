@@ -101,4 +101,4 @@ for element in atomic_symbols: # Iterate from "Na" to "U"
     print("Completed x-ray edge retrival for: {element}".format(element=element))
 # Write the file
 simple_json_writer(complete_uw_edge_repository,
-                   "../src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/JSONs/X-ray_Absorption_Edges.json")
+                   "../src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_JSONs/X-ray_Absorption_Edges.json")

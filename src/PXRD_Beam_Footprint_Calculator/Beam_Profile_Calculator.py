@@ -17,7 +17,7 @@ import matplotlib as mpl
 # Simple list of holder shapes to more easily expand code applicability in the future
 holder_shapes = ["Circle", "Rectangle"]
 
-### The lists below will become JSONs once the bulk of the code has been tested to work!
+### The lists below will become MAC_JSONs once the bulk of the code has been tested to work!
 # The lists below will hold presets from Malvern and Rigaku since the developer uses those, but can be updated to hold any values!
 
 # XRD Manufacturers and Models Dictionary
@@ -205,7 +205,7 @@ def othering(my_list):
     list_to_return.append("Other") # Add "Other" as option
     return list_to_return # Return list\
 
-### Functions to read and update JSONs will go here once bulk of the code is tested
+### Functions to read and update MAC_JSONs will go here once bulk of the code is tested
 
 
 # ---------- Gonio and Beam Calculation Functions ----------
@@ -232,7 +232,7 @@ beam's profile on a powder diffraction sample. I hope it will help you determine
 sample, sample holder, and diffractometer when collecting powder X-ray diffraction data.\n""")
 
     # Establish global boolean for checking sample thickness via MAC
-    check_thickness = True
+    check_thickness = False
     sample_MAC = 0
 
     # Prompt the user to engage with the MAC_Calculator
@@ -246,6 +246,7 @@ well-matched to the penetration depth of your beam.""")
         if estimate_MAC: # Provide an estimate of MAC
             user_input_MAC = get_user_float("Please enter the MAC of your sample (cm^2/g):")
             sample_MAC = float(user_input_MAC)
+            check_thickness = True
         elif not estimate_MAC: # Forgo sample thickness calculations
             print("This program will not consider your sample's thickness.")
             check_thickness = False # Change global boolean to skip thickness calculations/visualizations
@@ -258,7 +259,7 @@ well-matched to the penetration depth of your beam.""")
             print("Moving to MAC Calculator...")
             # Change the cwd to the directory in which the script lies so MAC_Calculator can find the JSON files
             subprocess.run(bash_command, cwd=MAC_Calc_directory, check=True)  # Run MAC Calculator script
-            print("Sample MAC calculated successfully.")  # Message upon successful completion
+            print("MAC_Calculator run successfully.")  # Message upon successful completion
         except subprocess.CalledProcessError as e:  # Minimal error handling
             print("An error occurred in calculating the sample MAC: {e}".format(e=e))
 
@@ -271,6 +272,9 @@ well-matched to the penetration depth of your beam.""")
     # At this point, the thickness check boolean and MAC value are updated and usable.
     # Prompt user for brand and instrument they are using:
     user_manufacturer = user_pick_from("Please select the manufacturer of your XRD unit from the following:", othering(manufacturers_models.keys()))
+
+    ### Need to update here to prompt for user input manufacturers, and then change all logic through line 335
+    ### Update to be JSON files and revise the .gitignore
 
     # If the user_manufacturer is known, prompt the user for the instrument type
     user_instrument = None # Establish variable on global scale
@@ -327,7 +331,7 @@ well-matched to the penetration depth of your beam.""")
         if update_sampleholder_JSON:
             user_holder_name = get_user_string("Please name your custom sample holder:", 12)
             user_holder_information[0] = user_holder_name # Update the user holder name to be "User input"
-            ### Implement function once reference dictionaries are JSONs.
+            ### Implement function once reference dictionaries are MAC_JSONs.
             ### Note that the function needs to handle cases where the manufacturer key already exists (Malvern) and cases where it does not (Thermo)!
             print("The following will be added as a sample to the JSON file:")
             #print("The manufacturers_sampleholders dictionary has been updated.")

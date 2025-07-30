@@ -85,7 +85,7 @@ def chem_form_parser(formula):
 def get_atomic_info(stoich_dict):
     atomic_info_dictionary = {}  # Establish desired dictionary as empty
     validated_MAC = True # Create a boolean flag if an unrecognized element is discovered
-    with open("JSONs/Element_Information_Dict.json", 'r') as jsonfile:  # Read in .json with necessary information
+    with open("MAC_JSONs/Element_Information_Dict.json", 'r') as jsonfile:  # Read in .json with necessary information
         element_data_dict = json.load(jsonfile)
         for element in stoich_dict.keys():  # Pull each unique element from input stoich_dict (e.g "Ca")
             # element_data_dict[element] yields the list of values for that element of the form /
@@ -106,7 +106,7 @@ this calculator can still flag potential beam and sample interferences for 10 < 
 def get_sample_MAC_library(atomic_info, incident_energy):
     sample_MAC_library = {} # Establish empty dictionary to be populated and returned by the function
     incident_energy_num = float(incident_energy) # Make sure function input is a float for math/comparisons later
-    with open("JSONs/Atomic_MACs.json", "r") as jsonfile: # Read in .json with necessary information
+    with open("MAC_JSONs/Atomic_MACs.json", "r") as jsonfile: # Read in .json with necessary information
         full_LAC_dict = json.load(jsonfile) # Contents of "Atomic_MACs.json" is now callable with Full_LAC_dict variable
         proton_numbers = [] # Establish an empty list to hold Z values of sample elements, used to iterate through .json
         returnable_key_list =[] # Establish an empty list to hold chemical symbol "keys" for final dict
@@ -142,7 +142,7 @@ def get_sample_MAC_library(atomic_info, incident_energy):
 # Generate a dictionary of all x-ray edges for the atoms in the user's sample
 def get_edge_info(stoich_dict):
     sample_x_ray_energy_dictionary ={} # Established desired dictionary as empty
-    with open("JSONs/X-ray_Absorption_Edges.json", "r") as jsonfile: # Read in .json with necessary information
+    with open("MAC_JSONs/X-ray_Absorption_Edges.json", "r") as jsonfile: # Read in .json with necessary information
         master_x_ray_energy_dict = json.load(jsonfile) # Make JSON file accessible as dictionary
         for element in stoich_dict.keys(): # Iterate through the elements in the user's sample
             try: # Append edge information for elements 11 <= Z <= 92
@@ -168,19 +168,26 @@ def beam_and_sample_interference(atoms_and_x_ray_energies, incident_energy):
 
 # Prompt user to either exit the program or pass values back to Beam_Profile_Calculator
 def end_of_script_protocol(value1, value2):
-    end_decision = user_pick_from("You have reached the end of the MAC Calculator. Please select an option from below.", ["Quit Program", "Return to Beam Profile Calculator"])
-    if end_decision == "Quit Program":
-        print("Thank you for using the MAC Calculator!")
-        sys.exit(0) # Ends script with standard 0 error
-    elif end_decision == "Return to Beam Profile Calculator":
-        print("Returning to Beam Profile Calculator!")
-        print("Writing JSON files...")
-        try:
-            with open("MAC_Calculator_Output.json", "w") as jsonfile: # Writes a JSON file with values passed to constant name
-                json.dump([value1, value2], jsonfile)
-            print("JSON file written.")
-        except Exception as e:
-            print("An unexpected error occurred: {}".format(e))
+    user_confirmation_loop = False
+    while not user_confirmation_loop:
+        end_decision = user_pick_from("You have reached the end of the MAC Calculator. Please select an option from below.", ["Quit program without saving MAC", "Save MAC and close calculator"])
+        if end_decision == "Quit program without saving MAC":
+            confirm_no_z = y_or_n_confirmation("If you are running this as part of Beam_Profile_Calculator.py, your sample thickness will not be checked. Is this alright?")
+            if confirm_no_z:
+                user_confirmation_loop = True
+                print("Thank you for using the MAC Calculator!")
+                sys.exit(0) # Ends script with standard 0 error
+            if not confirm_no_z:
+                continue
+        elif end_decision == "Save MAC and close calculator":
+            user_confirmation_loop = True
+            print("Writing JSON files with MAC...")
+            try:
+                with open("MAC_Calculator_Output.json", "w") as jsonfile: # Writes a JSON file with values passed to constant name
+                    json.dump([value1, value2], jsonfile)
+                print("JSON file written.")
+            except Exception as e:
+                print("An unexpected error occurred: {}".format(e))
 
 # ---------- Begin Main Logic of the Code as Callable Function main() ----------
 
@@ -221,7 +228,6 @@ def main():
         print("Dictionary conversion successful.")
     except Exception as e: # Activates if the user managed to pass an imaginary element
         print("An error occurred: {e}".format(e=e))
-        ### Add code here to exit to Beam_Profile_Calculator.py or stop program
 
     # Instantiate SampleChemistry object with element_dict
     user_sample = SampleChemistry(element_dict, user_valid_MAC) # This is periodically throwing errors?

@@ -4,10 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add instantiation of diffraction sample class">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Fix minor errors when manufacturer model exists without sample holders">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Profile_Calculator_Planning" beforeDir="false" afterPath="$PROJECT_DIR$/Profile_Calculator_Planning" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scrapers/Absorption_Edge_Reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scrapers/Absorption_Edge_Reader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scrapers/Atomic_LAC_Reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scrapers/Atomic_LAC_Reader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/JSONs/Atomic_MACs.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_JSONs/Atomic_MACs.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/JSONs/Element_Information_Dict.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_JSONs/Element_Information_Dict.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/JSONs/X-ray_Absorption_Edges.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_JSONs/X-ray_Absorption_Edges.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_Calculator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +50,7 @@
     </excluded-from-favorite>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="revise_MAC_pass_to_BSOC" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -71,31 +76,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.Absorption_Edge_Reader.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Atomic_LAC_Reader_and_Lists.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Beam_Profile_Calculator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Density_Calculator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Elemental_Densities_CSV_to_JSON.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MAC_Calculator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Main_Beam_Calculator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PXRD_Beam_Profile.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PXRD_Sample_Considerations.executor&quot;: &quot;Run&quot;,
-    &quot;Python.PXRD_Sample_Considerations_V2.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.Absorption_Edge_Reader.executor": "Run",
+    "Python.Atomic_LAC_Reader_and_Lists.executor": "Run",
+    "Python.Beam_Profile_Calculator.executor": "Run",
+    "Python.Density_Calculator.executor": "Run",
+    "Python.Elemental_Densities_CSV_to_JSON.executor": "Run",
+    "Python.MAC_Calculator.executor": "Run",
+    "Python.Main_Beam_Calculator.executor": "Run",
+    "Python.PXRD_Beam_Profile.executor": "Run",
+    "Python.PXRD_Sample_Considerations.executor": "Run",
+    "Python.PXRD_Sample_Considerations_V2.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "revise__user__manufacturer__logic",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory" />
@@ -334,7 +339,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753894030449</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Fix minor errors when manufacturer model exists without sample holders">
+      <option name="closed" value="true" />
+      <created>1753896024765</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1753896024765</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -352,7 +365,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Complete Atomic_LAC_Reader and add JSON repository" />
     <MESSAGE value="Complete Atomic_LAC_Reader and add JSON repository" />
     <MESSAGE value="Finalize auto-density functions and implement JSON" />
     <MESSAGE value="Finalize density user input tree and signficant commenting/renaming" />
@@ -377,7 +389,8 @@
     <MESSAGE value="Add manufacturer instrument/sample libraries and othering function" />
     <MESSAGE value="Add sample information logic, pre-instantiating sample holder class" />
     <MESSAGE value="Add instantiation of diffraction sample class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add instantiation of diffraction sample class" />
+    <MESSAGE value="Fix minor errors when manufacturer model exists without sample holders" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix minor errors when manufacturer model exists without sample holders" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753732345032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
@@ -387,8 +400,8 @@
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Sample_Considerations.coverage" NAME="PXRD_Sample_Considerations Coverage Results" MODIFIED="1753732267493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/STIXE" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Sample_Considerations_V2.coverage" NAME="PXRD_Sample_Considerations_V2 Coverage Results" MODIFIED="1752686654018" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/STIXE" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Atomic_LAC_Reader_and_Lists.coverage" NAME="Atomic_LAC_Reader_and_Lists Coverage Results" MODIFIED="1752071109669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$MAC_Calculator.coverage" NAME="MAC_Calculator Coverage Results" MODIFIED="1753811289901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory" />
+    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$MAC_Calculator.coverage" NAME="MAC_Calculator Coverage Results" MODIFIED="1753905121794" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Absorption_Edge_Reader.coverage" NAME="Absorption_Edge_Reader Coverage Results" MODIFIED="1752498806185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Beam_Profile_Calculator.coverage" NAME="Beam_Profile_Calculator Coverage Results" MODIFIED="1753895100383" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator" />
+    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Beam_Profile_Calculator.coverage" NAME="Beam_Profile_Calculator Coverage Results" MODIFIED="1753905167186" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator" />
   </component>
 </project>
