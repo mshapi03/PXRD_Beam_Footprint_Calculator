@@ -186,6 +186,7 @@ def load_preconfiguration(filepath):
         print("Error loading preconfiguration file: {}".format(e))
 
 # Function to update a JSON with user-desired information
+# Note that the function needs to handle cases where the key already exists and cases where it does not!
 def update_JSON(filepath, key, value):
     pass
 
@@ -234,6 +235,7 @@ sample, sample holder, and diffractometer when collecting powder X-ray diffracti
     # Establish global booleans for saving user inputs as part of the preconfigurations
     save_new_manu_instr = False
     save_new_manu_sample = False
+    save_new_radius = False
 
     # Prompt the user to engage with the MAC_Calculator
     print("""This program has the capability to determine your sample's mass attenuation coefficient (MAC) if you (1) know 
@@ -296,11 +298,6 @@ well-matched to the penetration depth of your beam.""")
         # If the user_manufacturer was not specified above, it is "Other" and save_new_manu_instr is False
         else:
             user_instrument = "Other"
-
-    #  Debug/test
-    print(save_new_manu_instr)
-    print(user_manufacturer)
-    print(user_instrument)
 
     # Prompt the user for information about their sample dimensions and flesh out the DiffractionSample class.
     user_holder = None # Establish variable on global scale
@@ -369,23 +366,33 @@ well-matched to the penetration depth of your beam.""")
         print("There was some issue in creating your sample - please restart the program.")
         raise TypeError("user_holder_information should have length 5 or 6 for proper instantiation of the DiffractionSample class.")
 
+    # Get goniometer radius
+    user_gonio_radius = 0 # Establish variable as global
+    if user_instrument in instruments_gonio_radii.keys(): # If the user's instrument has an associated radius already
+        confirm_radius = y_or_n_confirmation("Your \"{manufacturer}\" {instrument} diffractometer has a radius of {radius}. Is this correct?".format(
+            manufacturer=user_manufacturer, instrument=user_instrument, radius=instruments_gonio_radii[user_instrument]))
+        if confirm_radius: # The user sees the expect goniometer radius
+            user_gonio_radius = instruments_gonio_radii[user_instrument]
+            print("Radius confirmed.")
+    # If the user's instrument does not exist in instrument_and_radii.json or the value was not user confirmed
+    elif user_instrument not in instruments_gonio_radii.keys() or user_gonio_radius == 0:
+        user_gonio_radius = get_user_float("Please enter the radius of your goniometer in mm:") # User inputs a goniometer radius
+        if user_instrument != "Other": # If the user opted to store their instrument under a custom name
+            store_gonio_radius = y_or_n_confirmation("Would you like to store or update your instruments goniometer radius for future use?")
+            if store_gonio_radius: # If they want to store, the global update boolean is updated to True
+                save_new_radius = True
 
-    print(user_diffraction_sample)
-    user_diffraction_sample.print_all_information()
-    print(save_new_manu_sample)
+    # Now that all required JSONs have been referenced, update them if user requested
+    if save_new_manu_sample or save_new_manu_instr or save_new_radius:
+        print("Updating JSON files as requested...")
 
-    # Get Goniometer radius
-    # print("You are using a/an {instrument} diffractometer from the vendor \"{manufacturer}\".").format(instrument=user_instrument, manufacturer=user_manufacturer)
-    # user_gonio_radius = 0
-    # if user_instrument in instruments_gonio_radii.keys():
-    #     user_gonio_radius = instruments_gonio_radii[user_instrument]
-    #     print("The goniometer radius is {radius} mm.".format(radius=user_gonio_radius))
-    # elif user_instrument not in instruments_gonio_radii.keys():
-    #     user_gonio_radius = get_user_float("Please input the radius of your goniometer in mm:")
+    ### Implement JSON updating code
 
-    ### Now that all required JSONs have been referenced, update them if user requested
-    ### Note that the function needs to handle cases where the manufacturer key already exists (Malvern) and cases where it does not (Thermo)!
-    print("The following will be added as a sample to the JSON file:")
-    # print("The manufacturers_sampleholders dictionary has been updated.")
-
-
+    if save_new_manu_sample or save_new_manu_instr or save_new_radius:
+        print("JSON files updated. The following was added:")
+        if save_new_manu_instr:
+            print("{instrument} was added to {manufacturer}'s library.".format(instrument=user_instrument, manufacturer=user_manufacturer))
+        if save_new_manu_sample:
+            print("{sample} was added to {manufacturer}'s sample library.".format(sample=user_diffraction_sample.name, manufacturer=user_manufacturer))
+        if save_new_radius:
+            print("{instrument} was given a radius of {radius} mm".format(instrument=user_instrument, radius=user_gonio_radius))
