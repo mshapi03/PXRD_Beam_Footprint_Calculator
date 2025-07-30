@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add sample information logic, pre-instantiating sample holder class">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add instantiation of diffraction sample class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Profile_Calculator_Planning" beforeDir="false" afterPath="$PROJECT_DIR$/Profile_Calculator_Planning" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -325,7 +326,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753891609064</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Add instantiation of diffraction sample class">
+      <option name="closed" value="true" />
+      <created>1753894030449</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1753894030449</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -367,7 +376,8 @@
     <MESSAGE value="Finish commenting MAC_Calculator" />
     <MESSAGE value="Add manufacturer instrument/sample libraries and othering function" />
     <MESSAGE value="Add sample information logic, pre-instantiating sample holder class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add sample information logic, pre-instantiating sample holder class" />
+    <MESSAGE value="Add instantiation of diffraction sample class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add instantiation of diffraction sample class" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753732345032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
@@ -379,6 +389,6 @@
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Atomic_LAC_Reader_and_Lists.coverage" NAME="Atomic_LAC_Reader_and_Lists Coverage Results" MODIFIED="1752071109669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$MAC_Calculator.coverage" NAME="MAC_Calculator Coverage Results" MODIFIED="1753811289901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory" />
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Absorption_Edge_Reader.coverage" NAME="Absorption_Edge_Reader Coverage Results" MODIFIED="1752498806185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Beam_Profile_Calculator.coverage" NAME="Beam_Profile_Calculator Coverage Results" MODIFIED="1753893805575" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator" />
+    <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$Beam_Profile_Calculator.coverage" NAME="Beam_Profile_Calculator Coverage Results" MODIFIED="1753895100383" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator" />
   </component>
 </project>

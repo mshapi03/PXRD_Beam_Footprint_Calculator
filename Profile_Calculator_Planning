@@ -29,15 +29,6 @@ Optics - numerical details about configuration
 ///
 # self.monochrom_angle and self.mirror would expand capabilities to monochromators and mirror focusing
 
-SampleHolder class - numerical details about the sample
-# self.MAC
-# self.shape - either ["Circular", "Square", "Rectangular"]
-# Then depending on the shape:
-# self.diameter for circular
-# self.x for square
-# self.x and self.y for rectangle (where y is de facto the longer side)
-# self.z for sample well depth if thickness calculation is to be performed
-
 BSOC code will need the following Matplotlib functions:
 
 # Plot irradiated length against 2theta

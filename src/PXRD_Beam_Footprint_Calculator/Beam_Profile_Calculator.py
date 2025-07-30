@@ -22,10 +22,10 @@ holder_shapes = ["Circle", "Rectangle"]
 
 # XRD Manufacturers and Models Dictionary
 manufacturers_models = {"Rigaku": ["SmartLab", "SmartLab SE", "MiniFlex", "MiniFlex XpC"],
-                        "Malvern Panalytical": ["Aeris", "CubiX 3", "Empyrean", "X'Pert^3", "X'Pert Pro"]}
-                        # "Bruker": ["D8 DISCOVER", "D8 ADVANCE", "D6 PHASER", "D2 PHASER", "D8 ENDEAVOR"],
-                        # "Thermo Fisher": ["ARL X'TRA", "ARL EQUINOX 100"],
-                        # "Proto": ["AXRD Benchtop", "AXRD Theta-Theta", "AXRD LPD", "AXRD LPD-HR", "AXRD LPD-HT"]
+                        "Malvern Panalytical": ["Aeris", "CubiX 3", "Empyrean", "X'Pert^3", "X'Pert Pro"],
+                        "Bruker": ["D8 DISCOVER", "D8 ADVANCE", "D6 PHASER", "D2 PHASER", "D8 ENDEAVOR"],
+                        "Thermo Fisher": ["ARL X'TRA", "ARL EQUINOX 100"],
+                        "Proto": ["AXRD Benchtop", "AXRD Theta-Theta", "AXRD LPD", "AXRD LPD-HR", "AXRD LPD-HT"]}
 
 # XRD Brands as keys with a list of lists as values, holding known compatible sample holders in the general form:
 # ["Name", "Circle", diameter, depth, min_2theta] or ["Name" "Rectangle", axial dimension, equitorial dimension, depth, min_2theta] with values in mm
@@ -41,6 +41,9 @@ manufacturers_sampleholders = {"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0
                                                        ["Reg 27mm", "Circle", 27, 2.4, 0],
                                                        ["Si Substrate", "Circle", 15, 0.2, 0]]}
                                # I ignored the 26, 32, and 40 mm spring-loaded sample holders since thickness varies
+
+# Known XRD Instruments with their goniometer radii
+instruments_gonio_radii = {"X'Pert^3": 240, "X'Pert Pro": 240}
 
 
 # ---------- Class Definitions ----------
@@ -75,6 +78,9 @@ class DiffractionSample:
 
     def print_all_information(self):
         print(vars(self))
+
+    ### Here we will write functions that calculate area for circle and rectangle as well as perform a thickness check with MAC and depth if possible
+    ### To be done after/during MatPlotLib calculations
 
 
 # ---------- Simplifying Functions ----------
@@ -271,20 +277,23 @@ well-matched to the penetration depth of your beam.""")
     if user_manufacturer != "Other":
         user_instrument = user_pick_from("Please select the instrument you are using from the following:", othering(manufacturers_models[user_manufacturer]))
     else:
-        user_instrument = "Other"
+        user_instrument = get_user_string("Please write the name of the instrument you are using:", 20)
 
     # Prompt the user for information about their sample dimensions and flesh out the DiffractionSample class.
     user_holder = None # Establish variable on global scale
     user_holder_information = [] # Establish empty list on global scale
     if user_manufacturer != "Other": # As long as the manufacturer is known
-        known_compatible_sample_holders = manufacturers_sampleholders[user_manufacturer] # Access list of lists (sample holders) for specified manufacturer
-        sample_holder_names = [holder[0] for holder in known_compatible_sample_holders] # List comprehension to generate all holder names
-        user_holder = user_pick_from("Please select your sample holder from the following:", othering(sample_holder_names))
-        if user_holder != "Other": # User selects a known sample holder from the list, map that info to user_holder_information
-            for holder in known_compatible_sample_holders: # For holder info list in all lists for a given manufacturer
-                if holder[0] == user_holder: # If the names match, map the user's sample holder info with the library info and stop looking
-                    user_holder_information = holder
-                    break
+        try: # Add error handling if a manufacturer model exists without any sample holders
+            known_compatible_sample_holders = manufacturers_sampleholders[user_manufacturer] # Access list of lists (sample holders) for specified manufacturer
+            sample_holder_names = [holder[0] for holder in known_compatible_sample_holders] # List comprehension to generate all holder names
+            user_holder = user_pick_from("Please select your sample holder from the following:", othering(sample_holder_names))
+            if user_holder != "Other": # User selects a known sample holder from the list, map that info to user_holder_information
+                for holder in known_compatible_sample_holders: # For holder info list in all lists for a given manufacturer
+                    if holder[0] == user_holder: # If the names match, map the user's sample holder info with the library info and stop looking
+                        user_holder_information = holder
+                        break
+        except Exception as e:
+            user_holder = "Other" # Force the user to input sample information as we have no known samples for that manufacturer
     if user_manufacturer == "Other" or user_holder == "Other": # Throw here if user_manufacturer is "Other" or user_holder is "Other" after above test
         user_holder = "Custom" # Mark the name of this hold as a custom input from the user
         user_holder_information.append(user_holder) # Append this to user_holder_information list to keep standard formatting
@@ -306,8 +315,9 @@ well-matched to the penetration depth of your beam.""")
             user_holder_information.append(user_well_depth)
         elif not check_thickness:
             user_holder_information.append(0)
-        # Assume user sample has no minimum 2theta range (i.e. the user has planned their experiment accordingly)
-        user_holder_information.append(0)
+        # Prompt user for minimum 2theta range
+        user_holder_angle_limit = get_user_float("If known, please input the minimum 2theta angle at which your sample can be used. Else, write \"0\":")
+        user_holder_information.append(user_holder_angle_limit)
 
     print("Sample information stored.")
 
@@ -317,7 +327,8 @@ well-matched to the penetration depth of your beam.""")
         if update_sampleholder_JSON:
             user_holder_name = get_user_string("Please name your custom sample holder:", 12)
             user_holder_information[0] = user_holder_name # Update the user holder name to be "User input"
-            # Implement function once reference dictionaries are JSONs.
+            ### Implement function once reference dictionaries are JSONs.
+            ### Note that the function needs to handle cases where the manufacturer key already exists (Malvern) and cases where it does not (Thermo)!
             print("The following will be added as a sample to the JSON file:")
             #print("The manufacturers_sampleholders dictionary has been updated.")
 
@@ -333,8 +344,20 @@ well-matched to the penetration depth of your beam.""")
                                                     equi=user_holder_information[3], MAC=sample_MAC,
                                                     depth=user_holder_information[4],
                                                     min_2theta=user_holder_information[5])
+    else: # should be inaccessible as user_holder_information should always have 5 or 6 entries
+        print("There was some issue in creating your sample - please restart the program.")
+        raise TypeError("user_holder_information should have length 5 or 6 for proper instantiation of the DiffractionSample class.")
 
     print(user_diffraction_sample)
     user_diffraction_sample.print_all_information()
+
+    # Get Goniometer radius
+    # print("You are using a/an {instrument} diffractometer from the vendor \"{manufacturer}\".").format(instrument=user_instrument, manufacturer=user_manufacturer)
+    # user_gonio_radius = 0
+    # if user_instrument in instruments_gonio_radii.keys():
+    #     user_gonio_radius = instruments_gonio_radii[user_instrument]
+    #     print("The goniometer radius is {radius} mm.".format(radius=user_gonio_radius))
+    # elif user_instrument not in instruments_gonio_radii.keys():
+    #     user_gonio_radius = get_user_float("Please input the radius of your goniometer in mm:")
 
 
