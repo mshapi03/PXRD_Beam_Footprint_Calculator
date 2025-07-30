@@ -13,6 +13,11 @@ import json
 import matplotlib as mpl
 
 # ---------- Short Reference Dictionaries and Lists ----------
+
+# Simple list of holder shapes to more easily expand code applicability in the future
+holder_shapes = ["Circle", "Rectangle"]
+
+### The lists below will become JSONs once the bulk of the code has been tested to work!
 # The lists below will hold presets from Malvern and Rigaku since the developer uses those, but can be updated to hold any values!
 
 # XRD Manufacturers and Models Dictionary
@@ -89,6 +94,30 @@ def get_user_float(prompt, lower_bound = None, upper_bound = None): # Get a floa
             continue
     return returned_value
 
+# Function to get a string value from the user and confirm proper entry
+def get_user_string(prompt, max_length = None):
+    returned_value = None  # Define a variable to hold the user-confirmed string type value
+    loop_continue = True  # Establish a boolean to ensure while loop iterates until string value has been confirmed
+    while loop_continue:  # Loop according to the above boolean
+        user_input = input("{} ".format(prompt))  # Prompt the user to input their number
+        try:  # If the input cannot be made a str, ValueError and throw back to beginning of loop
+            user_input_str = str(user_input)
+            if max_length is not None:  # Make sure string length is smaller than bound, if passed
+                if len(user_input_str) > max_length:
+                    print("Invalid input; entry too long.")
+                    continue
+        except ValueError:  # Minimal exception handling
+            print("Invalid input. Please enter text.")
+            continue
+        user_y_or_n = y_or_n_confirmation("You have entered: {}. Is this correct?".format(
+            user_input))  # Call earlier y_or_n to ensure user input is typed correctly
+        if user_y_or_n:  # If the result of the user confirmation loop is True, return the float value and end the loop
+            returned_value = user_input_str
+            loop_continue = False
+        elif not user_y_or_n:  # If the result of the user confirmation loop is False, start from the top of the while loop
+            continue
+    return returned_value
+
 # Function to have user pick from a list of value and confirm proper entry
 def user_pick_from(prompt, pick_list): # Present pick list of choices with custom prompt
     confirmed_user_choice = None # Create a variable that will hold the finalized user choice
@@ -135,11 +164,13 @@ def MAC_Output_Reader(filepath):
     except Exception as e:
         print("Error reading MAC calculator output file: {}".format(e))
 
-# Function to take a dictionary and return a list of keys plus the "Other" keyword
-def othering(my_dict):
-    list_to_return = list(my_dict.keys())
-    list_to_return.append("Other")
-    return list_to_return
+# Function to take a list and return said list with the "Other" keyword
+def othering(my_list):
+    list_to_return = list(my_list) # Perhaps redundant, avoids .keys() issue with dictionaries
+    list_to_return.append("Other") # Add "Other" as option
+    return list_to_return # Return list\
+
+### Functions to read and update JSONs will go here once bulk of the code is tested
 
 
 # ---------- Gonio and Beam Calculation Functions ----------
@@ -204,7 +235,60 @@ well-matched to the penetration depth of your beam.""")
 
     # At this point, the thickness check boolean and MAC value are updated and usable.
     # Prompt user for brand and instrument they are using:
+    user_manufacturer = user_pick_from("Please select the manufacturer of your XRD unit from the following:", othering(manufacturers_models.keys()))
 
-    user_manufacturer = user_pick_from("Please select the manufacturer of your XRD unit from the following:", othering(manufacturers_models))
+    # If the user_manufacturer is known, prompt the user for the instrument type
+    user_instrument = None # Establish variable on global scale
+    if user_manufacturer != "Other":
+        user_instrument = user_pick_from("Please select the instrument you are using from the following:", othering(manufacturers_models[user_manufacturer]))
+    else:
+        user_instrument = "Other"
 
-    # Now we will prompt the user for information about their sample dimensions and flesh out the DiffractionSample class.
+    # Prompt the user for information about their sample dimensions and flesh out the DiffractionSample class.
+    user_holder = None # Establish variable on global scale
+    user_holder_information = [] # Establish empty list on global scale
+    if user_manufacturer != "Other": # As long as the manufacturer is known
+        known_compatible_sample_holders = manufacturers_sampleholders[user_manufacturer] # Access list of lists (sample holders) for specified manufacturer
+        sample_holder_names = [holder[0] for holder in known_compatible_sample_holders] # List comprehension to generate all holder names
+        user_holder = user_pick_from("Please select your sample holder from the following:", othering(sample_holder_names))
+        if user_holder != "Other": # User selects a known sample holder from the list, map that info to user_holder_information
+            for holder in known_compatible_sample_holders: # For holder info list in all lists for a given manufacturer
+                if holder[0] == user_holder: # If the names match, map the user's sample holder info with the library info and stop looking
+                    user_holder_information = holder
+                    break
+    if user_manufacturer == "Other" or user_holder == "Other": # Throw here if user_manufacturer is "Other" or user_holder is "Other" after above test
+        user_holder = "Custom" # Mark the name of this hold as a custom input from the user
+        user_holder_information.append(user_holder) # Append this to user_holder_information list to keep standard formatting
+        # Populate user_holder_information with custom user inputs
+        user_holder_shape = user_pick_from("Please select your sample holder shape:", holder_shapes)
+        user_holder_information.append(user_holder_shape)  # Append this shape to user_holder_information list to keep standard formatting
+        # Get area dimensions of sample holder according to shape
+        if user_holder_shape == "Circle":
+            user_diameter = get_user_float("Please input the diameter of your sample holder in mm:")
+            user_holder_information.append(user_diameter)
+        else: # Assume all other sample holders will need axial and equitorial coordinates
+            user_axial = get_user_float("Please input the axial (direction of beam propagation) length of your sample holder in mm:")
+            user_holder_information.append(user_axial)
+            user_equitorial = get_user_float("Please input the equitorial (orthogonal to beam propagation) width of your sample holder in mm:")
+            user_holder_information.append(user_equitorial)
+        # Get depth of sample well
+        user_well_depth = get_user_float("Please input the depth of your sample holder in mm:")
+        user_holder_information.append(user_well_depth)
+        # Assume user sample has no minimum 2theta range (i.e. the user has planned their experiment accordingly)
+        user_holder_information.append(0)
+
+    print("Sample information stored.")
+
+    # If the user's sample is of a known manufacturer, ask if they'd like to store the sample for future use
+    if user_holder_information[0] == "Custom" and user_manufacturer != "Other":
+        update_sampleholder_JSON = y_or_n_confirmation("Would you like to save your custom sample holder for future use under the {} brand?".format(user_manufacturer))
+        if update_sampleholder_JSON:
+            user_holder_name = get_user_string("Please name your custom sample holder:", 12)
+            user_holder_information[0] = user_holder_name # Update the user holder name to be "User input"
+            # Implement function once reference dictionaries are JSONs.
+            print("The following will be added as a sample to the JSON file:")
+            print(user_holder_information)
+            #print("The manufacturers_sampleholders dictionary has been updated.")
+
+    print(user_holder_information)
+
