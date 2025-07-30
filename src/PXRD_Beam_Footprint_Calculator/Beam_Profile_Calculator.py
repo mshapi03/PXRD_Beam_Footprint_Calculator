@@ -185,7 +185,9 @@ def load_preconfiguration(filepath):
     except Exception as e:
         print("Error loading preconfiguration file: {}".format(e))
 
-
+# Function to update a JSON with user-desired information
+def update_JSON(filepath, key, value):
+    pass
 
 # ---------- Gonio and Beam Calculation Functions ----------
 
@@ -226,7 +228,12 @@ sample, sample holder, and diffractometer when collecting powder X-ray diffracti
 
     # Establish global boolean for checking sample thickness via MAC
     check_thickness = False
+    # Establish global value for sample MAC
     sample_MAC = 0
+
+    # Establish global booleans for saving user inputs as part of the preconfigurations
+    save_new_manu_instr = False
+    save_new_manu_sample = False
 
     # Prompt the user to engage with the MAC_Calculator
     print("""This program has the capability to determine your sample's mass attenuation coefficient (MAC) if you (1) know 
@@ -265,22 +272,33 @@ well-matched to the penetration depth of your beam.""")
 
     # Prompt user for brand of instrument they are using:
     user_manufacturer = user_pick_from("Please select the manufacturer of your XRD unit from the following:", othering(manufacturers_models.keys()))
-    if user_manufacturer == "Other":
-        user_manufacturer = get_user_string("Please enter the manufacturer of your XRD unit:")
-    # user_manufacturer is no longer other, but is accurate. May or not exist in dictionaries
+    if user_manufacturer == "Other": # If the manufacturer is not included in the preconfigs, ask if they'll want to save this to preconfigurations
+        save_this_manu = y_or_n_confirmation("Would you like to save your manufacturer/instrument to the preconfigurations? You will be able to select it directly next time.")
+        if save_this_manu: # If yes, change the global boolean that controls this save
+            save_new_manu_instr = True
+            user_manufacturer = get_user_string("Please enter the manufacturer of your XRD unit:")
+
+    # user_manufacturer can now be from preconfig dictionaries, custom to be saved, or "Other" if we do not want to save
 
     # Prompt the user for the instrument they are using:
     user_instrument = None # Establish variable on global scale
-    # If the user_manufacturer is already present in manufacturers_and_models preconfiguration, start by picking from that list
-    try:
+    try: # If the user_manufacturer is already present in manufacturers_and_models preconfiguration, start by picking from that list
         user_instrument = user_pick_from("Please select the instrument you are using from the following:", othering(manufacturers_models[user_manufacturer]))
-    except KeyError: # If the user_manufacturer does not exist, it will throw a KeyError
-        user_instrument = get_user_string("Please write the name of the instrument you are using:", 20)
-    finally: # If the manufacturer is known but the instrument is not (i.e. user_instrument == "Other"), have user put in their instrument
-        if user_instrument == "Other":
+        if user_instrument == "Other": # If the manufacturer is known but the instrument is not
+            save_this_instr = y_or_n_confirmation("Would you like to save your instrument to the preconfigurations? You will be able to select it directly next time.")
+            if save_this_instr:
+                save_new_manu_instr = True
+                user_instrument =get_user_string("Please enter the instrument you are using:")
+    except KeyError: # If the user_manufacturer is "Other" or custom, it will throw a KeyError
+        # If the user_manufacturer is custom, save_new_manu_instr is True and the instrument becomes named
+        if save_new_manu_instr: # If the user would like to save this new manufacturer/instrument pair:
             user_instrument = get_user_string("Please write the name of the instrument you are using:", 20)
+        # If the user_manufacturer was not specified above, it is "Other" and save_new_manu_instr is False
+        else:
+            user_instrument = "Other"
 
     #  Debug/test
+    print(save_new_manu_instr)
     print(user_manufacturer)
     print(user_instrument)
 
