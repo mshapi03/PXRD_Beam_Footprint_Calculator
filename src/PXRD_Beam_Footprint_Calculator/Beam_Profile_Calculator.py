@@ -45,8 +45,37 @@ manufacturers_sampleholders = {"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0
 
 # ---------- Class Definitions ----------
 class DiffractionSample:
-    def __init__(self, x, y, z):
-        pass
+    def __init__(self, name, shape, z_check, diameter= 0, axi = 0, equi = 0, MAC = 0, depth = 0, min_2theta = 0):
+        self.name = name
+        self.shape = shape
+        self.min_2theta = min_2theta
+        if self.shape == "Circle":
+            self.diameter = diameter
+        else:
+            self.axi = axi
+            self.equi = equi
+        self.z_check = z_check
+        if self.z_check == True:
+            self.MAC = MAC
+            self.depth = depth
+
+    def __repr__(self):
+        string_1 = "A {shape} sample with ".format(shape=self.shape)
+        string_2 = ""
+        if self.shape == "Circle":
+            string_2 = "a diameter of {diameter} mm".format(diameter=self.diameter)
+        else:
+            string_2 = "dimensions {axi} mm by {equi} mm".format(axi=self.axi, equi=self.equi)
+        string_3 = ""
+        if self.z_check == True:
+            string_3 = " by {depth} mm deep and a MAC of {MAC} cm^2/g usable above {min_2theta} degrees 2theta.".format(depth= self.depth, MAC=self.MAC, min_2theta=self.min_2theta)
+        else:
+            string_3 = " usable above {min_2theta} degrees 2theta.".format(min_2theta=self.min_2theta)
+        return string_1 + string_2 + string_3
+
+    def print_all_information(self):
+        print(vars(self))
+
 
 # ---------- Simplifying Functions ----------
 
@@ -271,9 +300,12 @@ well-matched to the penetration depth of your beam.""")
             user_holder_information.append(user_axial)
             user_equitorial = get_user_float("Please input the equitorial (orthogonal to beam propagation) width of your sample holder in mm:")
             user_holder_information.append(user_equitorial)
-        # Get depth of sample well
-        user_well_depth = get_user_float("Please input the depth of your sample holder in mm:")
-        user_holder_information.append(user_well_depth)
+        # Get depth of sample well if thickness check is desired, else set to 0
+        if check_thickness:
+            user_well_depth = get_user_float("Please input the depth of your sample holder in mm:")
+            user_holder_information.append(user_well_depth)
+        elif not check_thickness:
+            user_holder_information.append(0)
         # Assume user sample has no minimum 2theta range (i.e. the user has planned their experiment accordingly)
         user_holder_information.append(0)
 
@@ -287,8 +319,22 @@ well-matched to the penetration depth of your beam.""")
             user_holder_information[0] = user_holder_name # Update the user holder name to be "User input"
             # Implement function once reference dictionaries are JSONs.
             print("The following will be added as a sample to the JSON file:")
-            print(user_holder_information)
             #print("The manufacturers_sampleholders dictionary has been updated.")
 
-    print(user_holder_information)
+    # Instantiate the DiffractionSample object with known information
+    if len(user_holder_information) == 5: # If the holder is circular
+        user_diffraction_sample = DiffractionSample(name=user_holder_information[0], shape=user_holder_information[1],
+                                                    z_check=check_thickness, diameter=user_holder_information[2],
+                                                    MAC=sample_MAC, depth=user_holder_information[3],
+                                                    min_2theta=user_holder_information[4])
+    elif len(user_holder_information) == 6: # If the holder is rectangular
+        user_diffraction_sample = DiffractionSample(name=user_holder_information[0], shape=user_holder_information[1],
+                                                    z_check=check_thickness, axi=user_holder_information[2],
+                                                    equi=user_holder_information[3], MAC=sample_MAC,
+                                                    depth=user_holder_information[4],
+                                                    min_2theta=user_holder_information[5])
+
+    print(user_diffraction_sample)
+    user_diffraction_sample.print_all_information()
+
 
