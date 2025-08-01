@@ -1,5 +1,33 @@
-{"Rigaku": ["SmartLab", "SmartLab SE", "MiniFlex", "MiniFlex XpC"],
-  "Malvern Panalytical": ["Aeris", "CubiX 3", "Empyrean", "X'Pert^3", "X'Pert Pro"],
-  "Bruker": ["D8 DISCOVER", "D8 ADVANCE", "D6 PHASER", "D2 PHASER", "D8 ENDEAVOR"],
-  "Thermo Fisher": ["ARL X'TRA", "ARL EQUINOX 100"],
-  "Proto": ["AXRD Benchtop", "AXRD Theta-Theta", "AXRD LPD", "AXRD LPD-HR", "AXRD LPD-HT"]}
+{
+    "Rigaku": [
+        "SmartLab",
+        "SmartLab SE",
+        "MiniFlex",
+        "MiniFlex XpC"
+    ],
+    "Malvern Panalytical": [
+        "Aeris",
+        "CubiX 3",
+        "Empyrean",
+        "X'Pert^3",
+        "X'Pert Pro"
+    ],
+    "Bruker": [
+        "D8 DISCOVER",
+        "D8 ADVANCE",
+        "D6 PHASER",
+        "D2 PHASER",
+        "D8 ENDEAVOR"
+    ],
+    "Thermo Fisher": [
+        "ARL X'TRA",
+        "ARL EQUINOX 100"
+    ],
+    "Proto": [
+        "AXRD Benchtop",
+        "AXRD Theta-Theta",
+        "AXRD LPD",
+        "AXRD LPD-HR",
+        "AXRD LPD-HT"
+    ]
+}

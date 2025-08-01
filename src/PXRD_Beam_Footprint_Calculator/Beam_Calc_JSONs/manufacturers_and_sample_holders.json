@@ -1,2 +1,71 @@
-{"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0.2, 0], ["Glass 0.5mm", "Rectangle", 15, 15, 0.5, 0], ["ZDS 5x0.2 mm", "Circle", 5, 0.2, 0], ["ASC 2mm", "Circle", 30, 2, 0], ["ASC 0.5mm", "Circle", 30, 0.5, 0], ["ASC 0.2mm", "Circle", 30, 0.2, 0]],
-  "Malvern Panalytical": [["Reg 16mm", "Circle", 16, 2.4, 0], ["Reg 27mm", "Circle", 27, 2.4, 0], ["Si Substrate", "Circle", 15, 0.2, 0]]}
+{
+    "Rigaku": [
+        [
+            "Glass 0.2mm",
+            "Rectangle",
+            15,
+            15,
+            0.2,
+            0
+        ],
+        [
+            "Glass 0.5mm",
+            "Rectangle",
+            15,
+            15,
+            0.5,
+            0
+        ],
+        [
+            "ZDS 5x0.2 mm",
+            "Circle",
+            5,
+            0.2,
+            0
+        ],
+        [
+            "ASC 2mm",
+            "Circle",
+            30,
+            2,
+            0
+        ],
+        [
+            "ASC 0.5mm",
+            "Circle",
+            30,
+            0.5,
+            0
+        ],
+        [
+            "ASC 0.2mm",
+            "Circle",
+            30,
+            0.2,
+            0
+        ]
+    ],
+    "Malvern Panalytical": [
+        [
+            "Reg 16mm",
+            "Circle",
+            16,
+            2.4,
+            0
+        ],
+        [
+            "Reg 27mm",
+            "Circle",
+            27,
+            2.4,
+            0
+        ],
+        [
+            "Si Substrate",
+            "Circle",
+            15,
+            0.2,
+            0
+        ]
+    ]
+}

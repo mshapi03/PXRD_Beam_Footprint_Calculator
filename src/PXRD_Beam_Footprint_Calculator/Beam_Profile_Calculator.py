@@ -31,7 +31,7 @@ class DiffractionSample:
         self.z_check = z_check
         if self.z_check == True:
             self.MAC = MAC
-            self.depth = depth
+        self.depth = depth # Depth must be initialized even if MAC is not to allow users to write custom sample holders for future use
 
     def __repr__(self):
         string_1 = "A {shape} sample with ".format(shape=self.shape)
@@ -186,9 +186,26 @@ def load_preconfiguration(filepath):
         print("Error loading preconfiguration file: {}".format(e))
 
 # Function to update a JSON with user-desired information
-# Note that the function needs to handle cases where the key already exists and cases where it does not!
-def update_JSON(filepath, key, value):
-    pass
+def update_JSON(filepath, key_to_update, new_value):
+    data = load_preconfiguration(filepath) # Call JSON reading function to populate a Python dictionary with current JSON
+    data_values = list(data.values()) # Load all dict values into a list
+    value_type = type(data_values[0]) # Check the type of the first item in the list of dict values (either list or not a list)
+    # Test the type of the dictionary's values (list, int) to dictate the procedure for updating the dictionary
+    if value_type != list: # If the value is not a list, like float/int for instru_gonio, just do a simple update
+        data[key_to_update] = new_value # Perform the update, initializing a new key if the instr does not exist
+    elif value_type == list: # If the value is a list, for manu_instr or manu_sample, need to append to existing list
+        get_key = data.get(key_to_update, "New Manufacturer") # Get the manufacturer key if it exists, else add new key
+        if get_key == "New Manufacturer": # Add new entry since manufacturer does not exist, passing new_value as the sole item in a new list
+            data[key_to_update] = [] # Establish an empty list and append, else we get each character of the string appended
+            data[key_to_update].append(new_value)
+        else: # If the key passed to update_JSON already exists, append the new value to the list
+            data[key_to_update] = data[key_to_update].append(new_value)
+    try: # Overwrite the previous JSON file with new update
+        with open(filepath, "w") as jsonfile:
+            json.dump(data, jsonfile, indent=4)
+        print("{file} updated.".format(file=filepath))
+    except Exception as e:
+        print("Error updating JSON file (file): {error}".format(file=filepath, error=e))
 
 # ---------- Gonio and Beam Calculation Functions ----------
 
@@ -208,19 +225,23 @@ if __name__ == "__main__": # All code must go inside in this block to ensure pro
     MAC_Calc_Output = os.path.join(MAC_Calc_directory, "MAC_Calculator_Output.json") # MAC_Calculator_Directory
     # Build absolute path to the directory containing preconfiguration JSONs (for Beam_Calculation)
     Beam_Calc_J_directory = os.path.join(Beam_Profile_directory, "Beam_Calc_JSONs") # Beam_Calc_JSONs
+    # Build absolute path to each preconfiguration JSON (for Beam_Calculation)
+    manu_model_path = os.path.join(Beam_Calc_J_directory, "manufacturers_and_models.json")
+    manu_samphold_path = os.path.join(Beam_Calc_J_directory, "manufacturers_and_sample_holders.json")
+    instru_gonio_path = os.path.join(Beam_Calc_J_directory, "instruments_and_radii.json")
 
     # Initialize the calculator by making sure there is no previous MAC Calculator Output
     delete_MAC_output(MAC_Calc_Output)
 
     # Build pre-configured dictionaries from JSON files
     # General form: manufacturers_models = {"Rigaku": ["SmartLab", "SmartLab SE", "MiniFlex", "MiniFlex XpC"],
-    manufacturers_models = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "manufacturers_and_models.json"))
+    manufacturers_models = load_preconfiguration(manu_model_path)
     # General form: ["Name", "Circle", diameter, depth, min_2theta] or ["Name" "Rectangle", axial dimension, equitorial dimension, depth, min_2theta] with values in mm
         # {"Rigaku": [["Glass 0.2mm", "Rectangle", 15, 15, 0.2, 0], ["Glass 0.5mm", "Rectangle", 15, 15, 0.5, 0], etc.
         # Note that axial is the length of sample well along the beam direction, equitorial is the width of the sample orthogonal to beam direction
-    manufacturers_sampleholders = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "manufacturers_and_sample_holders.json"))
+    manufacturers_sampleholders = load_preconfiguration(manu_samphold_path)
     # General form: {"X'Pert^3": 240, "X'Pert Pro": 240} with values in mm
-    instruments_gonio_radii = load_preconfiguration(os.path.join(Beam_Calc_J_directory, "instruments_and_radii.json"))
+    instruments_gonio_radii = load_preconfiguration(instru_gonio_path)
 
     # Welcome message and state aim of code
     print("""Welcome to the powder XRD beam footprint calculator! This program is designed to help visualize an X-ray
@@ -329,12 +350,9 @@ well-matched to the penetration depth of your beam.""")
             user_holder_information.append(user_axial)
             user_equitorial = get_user_float("Please input the equitorial (orthogonal to beam propagation) width of your sample holder in mm:")
             user_holder_information.append(user_equitorial)
-        # Get depth of sample well if thickness check is desired, else set to 0
-        if check_thickness:
-            user_well_depth = get_user_float("Please input the depth of your sample holder in mm:")
-            user_holder_information.append(user_well_depth)
-        elif not check_thickness:
-            user_holder_information.append(0)
+        # Get depth of sample well even if thickness check is not desired so it will be accurate if saved
+        user_well_depth = get_user_float("Please input the depth of your sample holder in mm:")
+        user_holder_information.append(user_well_depth)
         # Prompt user for minimum 2theta range
         user_holder_angle_limit = get_user_float("If known, please input the minimum 2theta angle at which your sample can be used. Else, write \"0\":")
         user_holder_information.append(user_holder_angle_limit)
@@ -387,13 +405,22 @@ well-matched to the penetration depth of your beam.""")
     if save_new_manu_sample or save_new_manu_instr or save_new_radius:
         print("Updating JSON files as requested...")
 
-    ### Implement JSON updating code
+    # Implement JSON updating code
+    if save_new_manu_instr:
+        update_JSON(manu_model_path, user_manufacturer, user_instrument)
+        print("{instrument} was added to {manufacturer}'s library.".format(instrument=user_instrument,
+                                                                           manufacturer=user_manufacturer))
+    if save_new_manu_sample:
+        # List of sample traits we add varies slightly depending on the shape of sample
+        if user_diffraction_sample.shape == "Circle":
+            update_JSON(manu_samphold_path, user_manufacturer, [user_diffraction_sample.name, user_diffraction_sample.shape, user_diffraction_sample.diameter, user_diffraction_sample.depth, user_diffraction_sample.min_2theta])
+        elif user_diffraction_sample.shape == "Rectangle":
+            update_JSON(manu_samphold_path, user_manufacturer, [user_diffraction_sample.name, user_diffraction_sample.shape, user_diffraction_sample.axi, user_diffraction_sample.equi, user_diffraction_sample.depth, user_diffraction_sample.min_2theta])
+        print("{sample} was added to {manufacturer}'s sample library.".format(sample=user_diffraction_sample.name,
+                                                                              manufacturer=user_manufacturer))
+    if save_new_radius:
+        update_JSON(instru_gonio_path, user_instrument, user_gonio_radius)
+        print("{instrument} was given a radius of {radius} mm".format(instrument=user_instrument,
+                                                                      radius=user_gonio_radius))
 
-    if save_new_manu_sample or save_new_manu_instr or save_new_radius:
-        print("JSON files updated. The following was added:")
-        if save_new_manu_instr:
-            print("{instrument} was added to {manufacturer}'s library.".format(instrument=user_instrument, manufacturer=user_manufacturer))
-        if save_new_manu_sample:
-            print("{sample} was added to {manufacturer}'s sample library.".format(sample=user_diffraction_sample.name, manufacturer=user_manufacturer))
-        if save_new_radius:
-            print("{instrument} was given a radius of {radius} mm".format(instrument=user_instrument, radius=user_gonio_radius))
+    print("JSON files updated. You have reached the current end of the script.")
