@@ -155,11 +155,11 @@ def delete_MAC_output(filepath):
     if os.path.exists(filepath):
         try:
             os.remove(filepath)
-            print("Calculator initialized.")
+            print("Previous MAC output found and removed - calculator initialized.")
         except OSError as e:
             print("Error initializing calculator: {}".format(e))
     else:
-        print("No previous output found - calculator initialized.")
+        print("No previous MAC output found - calculator initialized.")
 
 # Function to read in MAC_Calculator_Output.json files
 def MAC_Output_Reader(filepath):
@@ -368,6 +368,7 @@ well-matched to the penetration depth of your beam.""")
 
     # Get goniometer radius
     user_gonio_radius = 0 # Establish variable as global
+    confirm_radius = False # Establish radius confirmation globally to enable elif statement to update radius if user doesn't like the preconfig
     if user_instrument in instruments_gonio_radii.keys(): # If the user's instrument has an associated radius already
         confirm_radius = y_or_n_confirmation("Your \"{manufacturer}\" {instrument} diffractometer has a radius of {radius}. Is this correct?".format(
             manufacturer=user_manufacturer, instrument=user_instrument, radius=instruments_gonio_radii[user_instrument]))
@@ -375,7 +376,7 @@ well-matched to the penetration depth of your beam.""")
             user_gonio_radius = instruments_gonio_radii[user_instrument]
             print("Radius confirmed.")
     # If the user's instrument does not exist in instrument_and_radii.json or the value was not user confirmed
-    elif user_instrument not in instruments_gonio_radii.keys() or user_gonio_radius == 0:
+    if user_instrument not in instruments_gonio_radii.keys() or not confirm_radius:
         user_gonio_radius = get_user_float("Please enter the radius of your goniometer in mm:") # User inputs a goniometer radius
         if user_instrument != "Other": # If the user opted to store their instrument under a custom name
             store_gonio_radius = y_or_n_confirmation("Would you like to store or update your instruments goniometer radius for future use?")
