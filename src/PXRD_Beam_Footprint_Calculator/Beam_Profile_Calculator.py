@@ -245,8 +245,9 @@ if __name__ == "__main__": # All code must go inside in this block to ensure pro
 
     # Welcome message and state aim of code
     print("""Welcome to the powder XRD beam footprint calculator! This program is designed to help visualize an X-ray
-beam's profile on a powder diffraction sample. I hope it will help you determine the best optics settings for your 
-sample, sample holder, and diffractometer when collecting powder X-ray diffraction data.\n""")
+beam's profile on a powder diffraction sample in Bragg-Brentano/reflexion geometry when using divergence slits. Results 
+are not guaranteed for the use of focusing mirrors or incident monochromators. I hope it will help you determine the 
+best optics settings for your sample, sample holder, and diffractometer when collecting powder X-ray diffraction data.\n""")
 
     # Establish global boolean for checking sample thickness via MAC
     check_thickness = False
@@ -423,4 +424,18 @@ well-matched to the penetration depth of your beam.""")
         print("{instrument} was given a radius of {radius} mm".format(instrument=user_instrument,
                                                                       radius=user_gonio_radius))
 
-    print("JSON files updated. You have reached the current end of the script.")
+    # Begin portion of code which prompts user for optic components
+    print("Now I will need some information about the optics you are planning to use for your experiment.")
+    # Ask user if they are running in fixed or variable divergence slit mode
+    fixed_or_variable = user_pick_from("Are you operating your instrument in fixed divergence slit (FDS) or variable/automatic divergence slit (ADS) mode?", ["Fixed", "Variable", "Explain"])
+    if fixed_or_variable == "Explain": # Offer more information to user on this choice.
+        print("""FDS means your divergence slit opening remains constant during your experiment, while the beam length 
+changes. This is a constant irradiated volume experiment compatible with Rietveld analysis. ADS refers to a divergence 
+slit opening changing over the course of the experiment to keep a constant irradiated length (and therefore area). ADS 
+is commonly used for thin-film samples, and not all instruments have ADS capabilities. This choice determines how certain
+key math is performed, as well as whether you are presented with a graph of beam length vs. two-theta or divergence slit
+opening vs. two-theta.""")
+        # Prompt user to update to value to one of two options
+        fixed_or_variable = user_pick_from("Are you operating your instrument in fixed divergence slit (FDS) or variable/automatic divergence slit (ADS) mode?", ["Fixed", "Variable"])
+
+    ### Reminder to add a checker to see if the minimum 2theta is below their DiffractionSample two-theta!
