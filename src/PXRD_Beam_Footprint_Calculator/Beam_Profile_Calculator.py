@@ -9,6 +9,8 @@ import subprocess
 import os
 # Library to allow code to read and write JSON files
 import json
+# Library to allow for trigonometric calculations
+from math import degrees, radians, atan, sin
 # Library to allow code to create and output visualizations
 import matplotlib as mpl
 
@@ -53,6 +55,8 @@ class DiffractionSample:
     ### Here we will write functions that calculate area for circle and rectangle as well as perform a thickness check with MAC and depth if possible
     ### To be done after/during MatPlotLib calculations
 
+class Optics:
+    pass
 
 # ---------- Simplifying Functions ----------
 
@@ -210,8 +214,13 @@ def update_JSON(filepath, key_to_update, new_value):
 # ---------- Gonio and Beam Calculation Functions ----------
 
 # Function to calculate incident divergence slit angle from millimeter width
+# Note, this function comes from a Bruker D8 manual where the following {width in mm (w): angle in degrees (phi)} pairs are given:
+    # {0.05: 0.025, 0.1: 0.05, 0.2: 0.1, 0.6: 0.3, 1: 0.5, 2: 1, 6: 3}
+    # From this and trig, the constant d = 114.59 mm was worked from tan(phi/2) = (w/2)/d
+    # As Bruker is the only vendor to the author's knowledge that uses mm, it is assumed these relations hold true for other models and vendors which do the same
 def DS_phi_from_mm(millimeter):
-    pass
+    phi = degrees(2*atan((millimeter/229.18)))
+    return phi
 # ---------- Begin User-Facing Code ----------
 
 if __name__ == "__main__": # All code must go inside in this block to ensure proper resolving between packages
@@ -426,6 +435,11 @@ well-matched to the penetration depth of your beam.""")
 
     # Begin portion of code which prompts user for optic components
     print("Now I will need some information about the optics you are planning to use for your experiment.")
+
+    ### Add option to read in a selection from preconfig_optics.json and skip the entries below
+    ### print("If you have used this calculator before, you may retrieve settings from before.")
+        # Will need to check preconfig_optics.json to be empty, otherwise call the list in a formatted way
+
     # Ask user if they are running in fixed or variable divergence slit mode
     fixed_or_variable = user_pick_from("Are you operating your instrument in fixed divergence slit (FDS) or variable/automatic divergence slit (ADS) mode?", ["Fixed", "Variable", "Explain"])
     if fixed_or_variable == "Explain": # Offer more information to user on this choice.
@@ -438,4 +452,35 @@ opening vs. two-theta.""")
         # Prompt user to update to value to one of two options
         fixed_or_variable = user_pick_from("Are you operating your instrument in fixed divergence slit (FDS) or variable/automatic divergence slit (ADS) mode?", ["Fixed", "Variable"])
 
+    # Get beam length if operating mode is variable
+    beam_length = 0 # Establish variable on global scope
+    if fixed_or_variable == "Variable":
+        beam_length = get_user_float("Please enter your beam length in mm:", 0.0001) # Add lower bound to make sure the value is non-zero
+
+    # Get divergence slit angle if operating mode is fixed
+    divergence_slit_angle = 0 # Establish variable on global scope
+    if fixed_or_variable == "Fixed":
+        slit_form = user_pick_from("""Is your divergence slit provided in degrees or mm? Note that values provided
+in degrees will result in more accurate calculations.""", ["Degrees", "Millimeters"])
+        # This is because conversion from width to angle requires knowledge of the distance between the x-ray tube and the divergence slit
+        if slit_form == "Degrees":
+            # Somewhat arbitrary cutoffs for slit size, 1/64 and 8 degrees seeing as I've always seen 1/32 and 4 as the smallest and largest
+            divergence_slit_angle = get_user_float("Please enter your divergence slit angle in degrees:", 0.015625, 8)
+        elif slit_form == "Millimeters":
+            # Impose same cutoffs for slit size in form of mm width
+            divergence_slit_width = get_user_float("Please enter your divergence slit angle in millimeters:", 0.03125, 16.026)
+            divergence_slit_angle = DS_phi_from_mm(divergence_slit_width) # Call function to convert width to angle
+            print("Your divergence slit has been converted from {mm} to {degrees:.2f} degrees to enable proper calculation.".format(mm=divergence_slit_width, degrees=divergence_slit_angle))
+
+    # Get the beam mask size
+    ### Add code
+
+    # Instantiate the Optics object
+    ### Add code
+
+    # Offer to write the Optics object to a preconfiguration
+    ### Add code
+
+
+    # Get the minimum and maximum two theta range
     ### Reminder to add a checker to see if the minimum 2theta is below their DiffractionSample two-theta!

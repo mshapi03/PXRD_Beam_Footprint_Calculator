@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Fix elif/if error to allow user to update gonio radius for known instruments">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Obtain fixed_or_variable mode information and update greeting message with applicability concerns">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs/manufacturers_and_sample_holders.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs/manufacturers_and_sample_holders.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -413,7 +414,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754055811195</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="Obtain fixed_or_variable mode information and update greeting message with applicability concerns">
+      <option name="closed" value="true" />
+      <created>1754060601466</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1754060601466</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -431,7 +440,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Reorganize and rename files" />
     <MESSAGE value="Move main STIXE script and update README" />
     <MESSAGE value="Create .gitignore to ignore Scrapers" />
     <MESSAGE value="Create general-use user prompt functions" />
@@ -456,7 +464,8 @@
     <MESSAGE value="Populate instruments_and_radii.json and test code before implementing JSON edit functionality to it" />
     <MESSAGE value="Update .gitignore and push branch" />
     <MESSAGE value="Fix elif/if error to allow user to update gonio radius for known instruments" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix elif/if error to allow user to update gonio radius for known instruments" />
+    <MESSAGE value="Obtain fixed_or_variable mode information and update greeting message with applicability concerns" />
+    <option name="LAST_COMMIT_MESSAGE" value="Obtain fixed_or_variable mode information and update greeting message with applicability concerns" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753732345032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
