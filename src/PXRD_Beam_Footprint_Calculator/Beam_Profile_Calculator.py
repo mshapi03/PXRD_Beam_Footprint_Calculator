@@ -41,10 +41,10 @@ class DiffractionSample:
         if self.shape == "Circle":
             string_2 = "a diameter of {diameter} mm".format(diameter=self.diameter)
         else:
-            string_2 = "dimensions {axi} mm by {equi} mm".format(axi=self.axi, equi=self.equi)
+            string_2 = "dimensions {axi} mm by {equi} mm by {depth} mm deep".format(axi=self.axi, equi=self.equi, depth=self.depth)
         string_3 = ""
         if self.z_check == True:
-            string_3 = " by {depth} mm deep and a MAC of {MAC} cm^2/g usable above {min_2theta} degrees 2theta.".format(depth= self.depth, MAC=self.MAC, min_2theta=self.min_2theta)
+            string_3 = " and a MAC of {MAC} cm^2/g usable above {min_2theta} degrees 2theta.".format(MAC=self.MAC, min_2theta=self.min_2theta)
         else:
             string_3 = " usable above {min_2theta} degrees 2theta.".format(min_2theta=self.min_2theta)
         return string_1 + string_2 + string_3
@@ -56,7 +56,32 @@ class DiffractionSample:
     ### To be done after/during MatPlotLib calculations
 
 class Optics:
-    pass
+    def __init__(self, mode, mask, name="Temp", i_slit=0, i_length=0):
+        self.name = name # Passed if the user wants to save the configuration to a JSON under unique name
+        self.mode = mode # Either "FDS" or "ADS"
+        self.mask = mask
+        if self.mode == "FDS":
+            self.i_slit = i_slit
+        elif self.mode == "ADS":
+            self.i_length = i_length
+
+    def __repr__(self):
+        string_1 = "An optical configuration using {mode} mode with a {mask} mm beam mask and ".format(mode=self.mode, mask=self.mask)
+        string_2 = ""
+        if self.mode == "FDS":
+            string_2 = "an incident divergence slit of {angle} degrees".format(angle=self.i_slit)
+        elif self.mode == "ADS":
+            string_2 = "a fixed beam length of {length} mm".format(length=self.i_length)
+        string_3 = ""
+        if self.name != "Temp":
+            string_3 = ", saved under the name \"{name}\".".format(name=self.name)
+        else:
+            string_3 = "."
+        return string_1 + string_2 + string_3
+
+    def print_all_information(self):
+        print(vars(self))
+
 
 # ---------- Simplifying Functions ----------
 
@@ -477,7 +502,15 @@ in degrees will result in more accurate calculations.""", ["Degrees", "Millimete
 your instrument uses the common convention of engraving the projected beam width on the mask, not the actual opening width.
 For example, a 13 mm mask has an opening <13 mm but projects a 13 mm wide beam:""", 0.0001, ) # Add lower bound to make sure the value is non-zero
 
-    # Instantiate the Optics object
+    ### Instantiate the Optics object
+    if fixed_or_variable == "Fixed":
+        pass
+        # user_optics =
+    elif fixed_or_variable == "Variable":
+        pass
+        # user_optics =
+
+    # Confirm instantiation and provide general advice on anti-scatter slit
     ### Add code
 
     # Offer to write the Optics object to a preconfiguration

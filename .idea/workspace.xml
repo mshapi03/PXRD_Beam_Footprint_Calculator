@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add mm to phi conversion logic and function, add notations to next features">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add get beam_mask_width">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
     </list>
@@ -429,7 +429,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754066396970</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Add get beam_mask_width">
+      <option name="closed" value="true" />
+      <created>1754158007915</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1754158007915</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -447,7 +455,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Create .gitignore to ignore Scrapers" />
     <MESSAGE value="Create general-use user prompt functions" />
     <MESSAGE value="Add geometry selection and basic code outline" />
     <MESSAGE value="Enable STIXE to throw to BSOC at specified point" />
@@ -472,7 +479,8 @@
     <MESSAGE value="Fix elif/if error to allow user to update gonio radius for known instruments" />
     <MESSAGE value="Obtain fixed_or_variable mode information and update greeting message with applicability concerns" />
     <MESSAGE value="Add mm to phi conversion logic and function, add notations to next features" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add mm to phi conversion logic and function, add notations to next features" />
+    <MESSAGE value="Add get beam_mask_width" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add get beam_mask_width" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753732345032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
