@@ -473,7 +473,9 @@ in degrees will result in more accurate calculations.""", ["Degrees", "Millimete
             print("Your divergence slit has been converted from {mm} to {degrees:.2f} degrees to enable proper calculation.".format(mm=divergence_slit_width, degrees=divergence_slit_angle))
 
     # Get the beam mask size
-    ### Add code
+    beam_mask_width = get_user_float("""Please enter your beam mask width in mm. NOTE: this calculator assumes 
+your instrument uses the common convention of engraving the projected beam width on the mask, not the actual opening width.
+For example, a 13 mm mask has an opening <13 mm but projects a 13 mm wide beam:""", 0.0001, ) # Add lower bound to make sure the value is non-zero
 
     # Instantiate the Optics object
     ### Add code
