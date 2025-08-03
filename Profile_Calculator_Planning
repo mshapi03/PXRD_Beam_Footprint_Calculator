@@ -1,4 +1,4 @@
-Updated July 29, 2025
+Updated August 2, 2025
 
 BSOC code classes:
 
@@ -6,15 +6,6 @@ DiffractionSample class works
 
 No need for independent instrument and goniometer classes - need to add to precursor and README that this is only for reflexion
 
-Thinking we'll write an Optics class which includes all things below and the radius
-
-Optics - numerical details about configuration
-# self.fixed_varied - fixed DS or variable DS mode
-# self.mask - beam width limit
-# self.i_slit - the divergence angle of the incident slit if operating in fixed DS mode
-# self.i_length - the fixed beam length if operating variable DS mode
-///
-# self.monochrom_angle and self.mirror would expand capabilities to monochromators and mirror focusing
 
 BSOC code will need the following Matplotlib functions:
 
@@ -28,24 +19,3 @@ References:
 # http://pd.chem.ucl.ac.uk/pdnn/inst1/optics1.htm
 # https://imf.ucmerced.edu/sites/g/files/ufvvjh1081/f/page/documents/x-ray_powder_diffraction.pdf
 # https://profex.doebelin.org/wp-content/uploads/2014/02/Lesson-2-Diffractometers-and-Phase-Identification.pdf
-
-________________________________________________________Outdated________________________________________________________
-
-Instrument - self.brand, self.model, self.gonio
-# self.brand - will allow the code to check manufacturer to make sure the beam calculations are being performed properly
-#   I.e. if there are differences between the calc for a Bruker and Malvern, we can throw to different math functions
-# self.model - will allow the code to check and make sure a goniometer configuration is compatible with the instrument model
-# self.gonio - holds an instantiated goniometer object (below)
-///
-# Initially had tube but no longer necessary due to how incident radiation is passed
-
-Goniometer - self.compatible_models, self.geometry, self.radius, self.min_theta, self.max_theta, self.optics
-# self.compatible_models is a list of all the XRD
-# self.geometry is the geometry of the instrument (reflexion, transmission, parallel-beam, etc.)
-# self.radius is the radius of the goniometer
-# self.min and max_theta are the scanning range
-# self.optics takes an instantiated optics object (below)
-///
-# self.focus would flag the method of focus, slits or mirrors - only compatible with slits
-# self.monochrom would flag an incident monochromator
-# .focus and .monochrom will not be incorporated in the current version

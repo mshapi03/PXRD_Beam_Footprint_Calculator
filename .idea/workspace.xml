@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Added JSON reading and writing for optics configuration, no logic to direct flow of main code" />
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Uodate .gitignore to ignore custom changes to presets">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Profile_Calculator_Planning" beforeDir="false" afterPath="$PROJECT_DIR$/Profile_Calculator_Planning" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -458,7 +463,23 @@
       <option name="project" value="LOCAL" />
       <updated>1754185767020</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Uodate .gitignore to add optic preconfig JSON">
+      <option name="closed" value="true" />
+      <created>1754185838519</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1754185838519</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Uodate .gitignore to ignore custom changes to presets">
+      <option name="closed" value="true" />
+      <created>1754185885834</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1754185885834</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -476,8 +497,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Complete STIXE and BSOC integration" />
-    <MESSAGE value="Revise BSOC code planning" />
     <MESSAGE value="Pass DiffractionSample object entirely, encounter recursion error" />
     <MESSAGE value="Fix error throwing to MAC_Calc from BPC" />
     <MESSAGE value="Enable passing of z_calc bool and MAC between programs and complete restructure" />
@@ -501,7 +520,9 @@
     <MESSAGE value="Add dunder methods to Optics class, pre-testing initiation" />
     <MESSAGE value="Instantiate optics object" />
     <MESSAGE value="Added JSON reading and writing for optics configuration, no logic to direct flow of main code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added JSON reading and writing for optics configuration, no logic to direct flow of main code" />
+    <MESSAGE value="Uodate .gitignore to add optic preconfig JSON" />
+    <MESSAGE value="Uodate .gitignore to ignore custom changes to presets" />
+    <option name="LAST_COMMIT_MESSAGE" value="Uodate .gitignore to ignore custom changes to presets" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753732345032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
