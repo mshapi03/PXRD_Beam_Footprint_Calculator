@@ -500,20 +500,29 @@ in degrees will result in more accurate calculations.""", ["Degrees", "Millimete
     # Get the beam mask size
     beam_mask_width = get_user_float("""Please enter your beam mask width in mm. NOTE: this calculator assumes 
 your instrument uses the common convention of engraving the projected beam width on the mask, not the actual opening width.
-For example, a 13 mm mask has an opening <13 mm but projects a 13 mm wide beam:""", 0.0001, ) # Add lower bound to make sure the value is non-zero
+For example, a 13 mm mask has a physical opening <13 mm but projects a 13 mm wide beam:""", 0.0001, ) # Add lower bound to make sure the value is non-zero
 
-    ### Instantiate the Optics object
+    # Now that all optics have been provided, prompt the user if they'd like to save and get name if so
+    # Establish a boolean to reference whether to save the configuration
+    save_optic_configuration =  y_or_n_confirmation("Would you like to save this optical configuration for future use?")
+    if save_optic_configuration:
+        configuration_name = get_user_string("Please enter your desired name for the optic settings entered:", 20)
+    elif not save_optic_configuration:
+        configuration_name = "Temp"
+
+    # Instantiate the Optics object
+    # Because of how Optics class is written, need an if/elif to convert "Fixed" to "FDS" and "Variable" to "ADS"
     if fixed_or_variable == "Fixed":
-        pass
-        # user_optics =
+        user_optics = Optics("FDS", mask=beam_mask_width, name=configuration_name, i_slit=divergence_slit_angle)
     elif fixed_or_variable == "Variable":
-        pass
-        # user_optics =
+        user_optics = Optics("ADS", mask=beam_mask_width, name=configuration_name, i_length=beam_length)
 
     # Confirm instantiation and provide general advice on anti-scatter slit
-    ### Add code
+    print(user_optics)
+    user_optics.print_all_information()
+    print()
 
-    # Offer to write the Optics object to a preconfiguration
+    # Write the Optics object to a preconfiguration if specified by user
     ### Add code
 
 
