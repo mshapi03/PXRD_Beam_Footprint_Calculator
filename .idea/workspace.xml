@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Instantiate optics object">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
-    </list>
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Added JSON reading and writing for optics configuration, no logic to direct flow of main code" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -453,7 +450,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754182702591</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Added JSON reading and writing for optics configuration, no logic to direct flow of main code">
+      <option name="closed" value="true" />
+      <created>1754185767020</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1754185767020</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -471,7 +476,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Enable STIXE to throw to BSOC at specified point" />
     <MESSAGE value="Complete STIXE and BSOC integration" />
     <MESSAGE value="Revise BSOC code planning" />
     <MESSAGE value="Pass DiffractionSample object entirely, encounter recursion error" />
@@ -496,7 +500,8 @@
     <MESSAGE value="Add get beam_mask_width" />
     <MESSAGE value="Add dunder methods to Optics class, pre-testing initiation" />
     <MESSAGE value="Instantiate optics object" />
-    <option name="LAST_COMMIT_MESSAGE" value="Instantiate optics object" />
+    <MESSAGE value="Added JSON reading and writing for optics configuration, no logic to direct flow of main code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added JSON reading and writing for optics configuration, no logic to direct flow of main code" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753732345032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
