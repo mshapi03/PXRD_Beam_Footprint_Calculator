@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add FDS mode beam length calc functions">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Change math library to numpy">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -131,14 +132,6 @@
       <workItem from="1752925198387" duration="5703000" />
       <workItem from="1753292217760" duration="31168000" />
       <workItem from="1754053746010" duration="66000" />
-    </task>
-    <task id="LOCAL-00006" summary="Add calculate sample MAC functionality, first &quot;working&quot; version">
-      <option name="closed" value="true" />
-      <created>1752418144072</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1752418144072</updated>
     </task>
     <task id="LOCAL-00007" summary="Add scraped x-ray edges data and scraper .py script">
       <option name="closed" value="true" />
@@ -524,7 +517,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754412465226</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Change math library to numpy">
+      <option name="closed" value="true" />
+      <created>1754413762817</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1754413762817</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -542,7 +543,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add logic to ensure real manufacturer and instrument" />
     <MESSAGE value="Add logic to ask user if they want to save manu/instr combo" />
     <MESSAGE value="Add logic to ask user if they want to save custom sample inputs to json and update .gitignore" />
     <MESSAGE value="Populate instruments_and_radii.json and test code before implementing JSON edit functionality to it" />
@@ -567,7 +567,8 @@
     <MESSAGE value="Update DiffractionSample class instantiation with LAC" />
     <MESSAGE value="Add beer_lambert and z-checking functionality" />
     <MESSAGE value="Add FDS mode beam length calc functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add FDS mode beam length calc functions" />
+    <MESSAGE value="Change math library to numpy" />
+    <option name="LAST_COMMIT_MESSAGE" value="Change math library to numpy" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">

@@ -268,20 +268,24 @@ def beer_lambert(LAC, thickness):
     return intensity_ratio, thick_enough
 
 # Function to return the portion of beam length from incident side to midway point (shorter)
-def l_short(radius, phi, theta):
-    l_one = (radius * np.sin(phi/2))/(np.sin(theta + (phi/2)))
+def l_short(radius, phi_degrees, theta_degrees):
+    phi_rad = np.deg2rad(phi_degrees)
+    theta_rad = np.deg2rad(theta_degrees)
+    l_one = (radius * np.sin(phi_rad/2))/(np.sin(theta_rad + (phi_rad/2)))
     return l_one
 
 # Function to return the portion of beam length from midway point to diffracted side (long)
-def l_long(radius, phi, theta):
-    l_two = (radius * np.sin(phi/2))/(np.sin(theta - (phi/2)))
+def l_long(radius, phi_degrees, theta_degrees):
+    phi_rad = np.deg2rad(phi_degrees)
+    theta_rad = np.deg2rad(theta_degrees)
+    l_two = (radius * np.sin(phi_rad / 2)) / (np.sin(theta_rad - (phi_rad / 2)))
     return l_two
 
 # Function which finds total length from l_short and l_long in FDS mode
-def FDS_length(radius, phi, min_theta, max_theta, step_size_deg=1):
+def FDS_length(radius, phi_degrees, min_theta_degrees, max_theta_degrees, step_size_deg=1):
     plotting_data_set = {} # Establish dictionary to hold {theta, beam length} pairs
-    for step in range(min_theta,max_theta, step_size_deg): # Iterate through provided two-theta range by default of 1 degree increment
-        plotting_data_set[step] = (l_short(radius, phi, step) + l_long(radius, phi, step)) # Sum two portions of length and save it as the value for that theta value
+    for step in range(min_theta_degrees, max_theta_degrees, step_size_deg): # Iterate through provided two-theta range by default of 1 degree increment
+        plotting_data_set[step] = (l_short(radius, phi_degrees, step) + l_long(radius, phi_degrees, step)) # Sum two portions of length and save it as the value for that theta value
     return plotting_data_set # Return dictionary to pass to plotting functions
 
 
@@ -552,7 +556,7 @@ in degrees will result in more accurate calculations.""", ["Degrees", "Millimete
                 # Impose same cutoffs for slit size in form of mm width
                 divergence_slit_width = get_user_float("Please enter your divergence slit width in millimeters:", 0.03125, 16.026)
                 divergence_slit_angle = DS_phi_from_mm(divergence_slit_width) # Call function to convert width to angle
-                print("Your divergence slit has been converted from {mm} to {degrees:.2f} degrees to enable proper calculation.".format(mm=divergence_slit_width, degrees=divergence_slit_angle))
+                print("Your divergence slit has been converted from {mm} mm to {degrees:.2f} degrees to enable proper calculation.".format(mm=divergence_slit_width, degrees=divergence_slit_angle))
 
         # Get the beam mask size
         beam_mask_width = get_user_float("""Please provide your beam mask width in mm. \nNOTE: this calculator assumes your instrument uses the common convention of engraving the projected beam width on
