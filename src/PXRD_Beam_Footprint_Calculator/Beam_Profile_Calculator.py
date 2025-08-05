@@ -266,6 +266,24 @@ def beer_lambert(LAC, thickness):
         thick_enough = False
     return intensity_ratio, thick_enough
 
+# Function to return the portion of beam length from incident side to midway point (shorter)
+def l_short(radius, phi, theta):
+    l_one = (radius * math.sin(phi/2))/(math.sin(theta + (phi/2)))
+    return l_one
+
+# Function to return the portion of beam length from midway point to diffracted side (long)
+def l_long(radius, phi, theta):
+    l_two = (radius * math.sin(phi/2))/(math.sin(theta - (phi/2)))
+    return l_two
+
+# Function which finds total length from l_short and l_long in FDS mode
+def FDS_length(radius, phi, min_theta, max_theta, step_size_deg=1):
+    plotting_data_set = {} # Establish dictionary to hold {theta, beam length} pairs
+    for step in range(min_theta,max_theta, step_size_deg): # Iterate through provided two-theta range by default of 1 degree increment
+        plotting_data_set[step] = (l_short(radius, phi, step) + l_long(radius, phi, step)) # Sum two portions of length and save it as the value for that theta value
+    return plotting_data_set # Return dictionary to pass to plotting functions
+
+
 # ---------- Begin User-Facing Code ----------
 
 if __name__ == "__main__": # All code must go inside in this block to ensure proper resolving between packages
