@@ -284,9 +284,24 @@ def l_long(radius, phi_degrees, theta_degrees):
 # Function which finds total length from l_short and l_long in FDS mode
 def FDS_length(radius, phi_degrees, min_theta_degrees, max_theta_degrees, step_size_deg=1):
     plotting_data_set = {} # Establish dictionary to hold {theta, beam length} pairs
-    for step in range(min_theta_degrees, max_theta_degrees, step_size_deg): # Iterate through provided two-theta range by default of 1 degree increment
-        plotting_data_set[step] = (l_short(radius, phi_degrees, step) + l_long(radius, phi_degrees, step)) # Sum two portions of length and save it as the value for that theta value
+    for step in range(round(min_theta_degrees), round(max_theta_degrees+1), step_size_deg): # Iterate through provided two-theta range by default of 1 degree increment
+        plotting_data_set[step] = float(l_short(radius, phi_degrees, step) + l_long(radius, phi_degrees, step)) # Sum two portions of length and save it as the value for that theta value
     return plotting_data_set # Return dictionary to pass to plotting functions
+
+# Equation to find phi from a given two-theta position in ADS mode
+def ADS_equation_for_phi(phi, length, radius, theta):
+    # Rearrange the equation for FDS to solve for phi and simplify
+    return length * np.cos(phi) - 2 * radius * np.sin(theta) * np.sin(phi) - length * np.cos(2 * theta)
+
+# Solver function to solve phi equation for range of theta's
+def phi_solver(length_mm, radius_mm, min_theta_degrees, max_theta_degrees, step_size_deg=1):
+    plotting_data_set = {} # Establish dictionary to hold {theta, aperture size} pairs
+    initial_guess_phi = np.deg2rad(0.005) # Establish a starting guess of phi's value every time (about 1/4th degree)
+    for step in range(round(min_theta_degrees), round(max_theta_degrees+1), step_size_deg): # Iterate through provided two-theta range by default of 1 degree increment
+        step_rad = np.deg2rad(step) # Take the theta step we're on and convert it to radians
+        phi_solution = fsolve(ADS_equation_for_phi, initial_guess_phi, args=(length_mm, radius_mm, step_rad))
+        plotting_data_set[step] = float(np.rad2deg(phi_solution[0])) # fsolve returns a one-item array, result will be in rad so convert to deg
+    return plotting_data_set
 
 
 # ---------- Begin User-Facing Code ----------
@@ -605,3 +620,10 @@ sample, the incident x-rays will be {int:.1g}% of their original intensity.""".f
             print("This means your sample may be considered \"infinitely thick\", and you will not see artifacts from your sample holder.")
         elif not user_z_bool: # If the sample well is not sufficiently deep for the sample
             print("This means your sample may be too think for your holder, and you may see artifacts from your sample holder, especially at high angle.")
+
+    # Generate data set experiment depending on FDS or ADS mode:
+    if user_optics.mode == "FDS": # Generate dictionary of {theta: irradiated length}
+        graphable_data_set = FDS_length(user_gonio_radius, user_optics.i_slit, user_min_2theta, user_max_2theta)
+    elif user_optics.mode == "ADS": # Generate dictionary of {theta: apera\ture size}
+        graphable_data_set = phi_solver(user_optics.i_length, user_gonio_radius, user_min_2theta, user_max_2theta)
+    print(graphable_data_set)

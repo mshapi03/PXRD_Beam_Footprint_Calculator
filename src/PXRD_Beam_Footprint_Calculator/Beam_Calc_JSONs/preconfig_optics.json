@@ -2,10 +2,18 @@
     "Exempt": [],
     "TestOptics": [
         [
-            "TestOptics",
+            "TestOptics_FDS",
             "FDS",
             10.0,
             0.25
+        ]
+    ],
+    "TestOp_ADS": [
+        [
+            "TestOp_ADS",
+            "ADS",
+            10.0,
+            8.0
         ]
     ]
 }
