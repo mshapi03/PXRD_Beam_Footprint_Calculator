@@ -187,11 +187,11 @@ def beam_and_sample_interference(atoms_and_x_ray_energies, incident_energy, warn
     print("{} warning(s) raised.".format(warning_counter))
 
 # Prompt user to either exit the program or pass values back to Beam_Profile_Calculator
-def end_of_script_protocol(value1, value2):
+def end_of_script_protocol(value1, value2, value3):
     user_confirmation_loop = False
     while not user_confirmation_loop:
-        end_decision = user_pick_from("You have reached the end of the MAC Calculator. Please select an option from below.", ["Quit program without saving MAC", "Save MAC and close calculator"])
-        if end_decision == "Quit program without saving MAC":
+        end_decision = user_pick_from("You have reached the end of the MAC Calculator. Please select an option from below.", ["Quit program without saving ACs", "Save ACs and close calculator"])
+        if end_decision == "Quit program without saving ACs":
             confirm_no_z = y_or_n_confirmation("If you are running this as part of Beam_Profile_Calculator.py, your sample thickness will not be checked. Is this alright?")
             if confirm_no_z:
                 user_confirmation_loop = True
@@ -199,12 +199,12 @@ def end_of_script_protocol(value1, value2):
                 sys.exit(0) # Ends script with standard 0 error
             if not confirm_no_z:
                 continue
-        elif end_decision == "Save MAC and close calculator":
+        elif end_decision == "Save ACs and close calculator":
             user_confirmation_loop = True
-            print("Writing JSON files with MAC...")
+            print("Writing JSON files with ACs...")
             try:
                 with open("MAC_Calculator_Output.json", "w") as jsonfile: # Writes a JSON file with values passed to constant name
-                    json.dump([value1, value2], jsonfile)
+                    json.dump({"check thickness": value1, "MAC cm^2/g": value2, "LAC cm^-1": value3}, jsonfile)
                 print("JSON file written.")
             except Exception as e:
                 print("An unexpected error occurred: {}".format(e))
@@ -212,8 +212,9 @@ def end_of_script_protocol(value1, value2):
 # ---------- Begin Main Logic of the Code as Callable Function main() ----------
 
 def main():
-    # Establish MAC and thickness_check variables to be calculated and passed back to Beam_Profile_Calculator.py
+    # Establish MAC, LAC and thickness_check variables to be calculated and passed back to Beam_Profile_Calculator.py
     sample_MAC = 0
+    sample_LAC = 0
     check_thickness = True
 
     # Get chemical formula from user. Code below will repeat until a satisfactory element dictionary is generated.
@@ -301,7 +302,7 @@ tube anode type from below or enter a custom value.""", ["Cu", "Co", "Mo", "Cr",
         sample_density = 0 # Establish variable to avoid scope errors
         print("""To use your sample MAC to calculate beam penetration depth (in Beam_Profile_Calculator.py),
 we must multiply the MAC by your sample's density to obtain the linear attenuation coefficient (LAC).""")
-        density_confirmation = False
+        density_confirmation = False # Establihs boolean to anchor the while loop
         while not density_confirmation:
             density_choice = user_pick_from("Please select from the following:", ["Enter density", "I do not have my sample density"])
             if density_choice == "Enter density":
@@ -318,10 +319,15 @@ volume as a property, this will be a highly erroneous calculation.""")
                     density_confirmation = True
                 else:
                     density_confirmation = False
-        user_sample.calculate_sample_LAC(sample_density)
+        user_sample.calculate_sample_LAC(sample_density) # Error handling exists in function, becomes user_sample.LAC
+        try: # Write the sample's LAC to the global value to return it properly
+            sample_LAC = user_sample.LAC
+        except AttributeError: # If there was an error in LAC calculation, reaffirm the LAC as 0
+            sample_LAC = 0
 
-    # Allow the user to decide to end the script or pass thickness boolean and sample MAC back to Beam_Profile_Calculator and resume
-    end_of_script_protocol(check_thickness, sample_MAC)
+
+    # Allow the user to decide to end the script or pass thickness boolean and sample ACs back to Beam_Profile_Calculator and resume
+    end_of_script_protocol(check_thickness, sample_MAC, sample_LAC)
 
 # ---------- Calling the main() Function ----------
 

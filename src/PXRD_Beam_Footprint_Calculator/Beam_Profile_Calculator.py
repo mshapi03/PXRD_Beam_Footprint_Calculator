@@ -1,5 +1,5 @@
 # Developed by Mitch S-A
-# Updated on August 2, 2025
+# Updated on August 5, 2025
 
 # ---------- Necessary imports ----------
 
@@ -197,8 +197,9 @@ def delete_MAC_output(filepath):
 def MAC_Output_Reader(filepath):
     try:
         with open(filepath, "r") as jsonfile: # Basic JSON reading
-            MAC_Calc_Output = json.load(jsonfile) # Load the two-item list as a variable
-            return bool(MAC_Calc_Output[0]), float(MAC_Calc_Output[1]) # return both items in bool, float order
+            MAC_Calc_Output = json.load(jsonfile) # Load the three-item dictionary as a variable
+            # return items in bool, float, float order
+            return bool(MAC_Calc_Output["check thickness"]), float(MAC_Calc_Output["MAC cm^2/g"]), float(MAC_Calc_Output["LAC cm^-1"])
     except Exception as e:
         print("Error reading MAC calculator output file: {}".format(e))
 
@@ -289,8 +290,9 @@ best optics settings for your sample, sample holder, and diffractometer when col
 
     # Establish global boolean for checking sample thickness via MAC
     check_thickness = False
-    # Establish global value for sample MAC
+    # Establish global value for sample MAC and LAC
     sample_MAC = 0
+    sample_LAC = 0
 
     # Establish global booleans for saving user inputs as part of the preconfigurations
     save_new_manu_instr = False
@@ -329,8 +331,9 @@ well-matched to the penetration depth of your beam.""")
     # If it does not exist, the user has either provided the values or decided against them, or check_thickness and sample_MAC are accurate
     # If the file does exist, the code below updates the check_thickness and sample_MAC values to that from MAC_Calculator
     if os.path.exists(MAC_Calc_Output):
-        check_thickness, sample_MAC = MAC_Output_Reader(MAC_Calc_Output)
-    # At this point, the thickness check boolean and MAC value are updated and usable.
+        check_thickness, sample_MAC, sample_LAC = MAC_Output_Reader(MAC_Calc_Output)
+    # At this point, the thickness check boolean, MAC, and LAC value are updated and usable.
+    # Note that MAC will likely go unused in this code, but is still present for archival reasons
 
     # Prompt user for brand of instrument they are using:
     user_manufacturer = user_pick_from("Please select the manufacturer of your XRD unit from the following:", othering(manufacturers_models.keys()))

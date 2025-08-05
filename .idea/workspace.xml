@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Create weighted average density function">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add logic and function to calculate LAC">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory/MAC_Calculator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -509,7 +510,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754402788509</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="Add logic and function to calculate LAC">
+      <option name="closed" value="true" />
+      <created>1754404397259</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1754404397259</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -527,7 +536,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add manufacturer instrument/sample libraries and othering function" />
     <MESSAGE value="Add sample information logic, pre-instantiating sample holder class" />
     <MESSAGE value="Add instantiation of diffraction sample class" />
     <MESSAGE value="Fix minor errors when manufacturer model exists without sample holders" />
@@ -552,7 +560,8 @@
     <MESSAGE value="Fix error writing new instruments to existing manufacturers" />
     <MESSAGE value="Fix error where empty interference dictionary is prompted to be displayed" />
     <MESSAGE value="Create weighted average density function" />
-    <option name="LAST_COMMIT_MESSAGE" value="Create weighted average density function" />
+    <MESSAGE value="Add logic and function to calculate LAC" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add logic and function to calculate LAC" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PXRD_Beam_Footprint_Calculator$PXRD_Beam_Profile.coverage" NAME="PXRD_Beam_Profile Coverage Results" MODIFIED="1753732345032" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/BSOC" />
