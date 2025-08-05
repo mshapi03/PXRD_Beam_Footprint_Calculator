@@ -254,6 +254,18 @@ def update_JSON(filepath, key_to_update, new_value):
 def DS_phi_from_mm(millimeter):
     phi = math.degrees(2*math.atan((millimeter/229.18)))
     return phi
+
+# Function to take LAC in cm^-1 and thickness in mm and return the percent attenuation
+def beer_lambert(LAC, thickness):
+    thick_enough = False
+    product = (-1) * (LAC * (thickness / 10)) # Convert thickness in mm to cm to get dimensionless exponent
+    intensity_ratio = math.exp(product)
+    if intensity_ratio < 0.05: # If incident x-rays are attenuated to < 5% of their original intensity
+        thick_enough = True
+    else:
+        thick_enough = False
+    return intensity_ratio, thick_enough
+
 # ---------- Begin User-Facing Code ----------
 
 if __name__ == "__main__": # All code must go inside in this block to ensure proper resolving between packages
@@ -428,9 +440,6 @@ penetration depth of your beam.""")
                                                     depth=user_holder_information[4],
                                                     min_2theta=user_holder_information[5])
 
-    # Debug
-    user_diffraction_sample.print_all_information()
-
     # Get goniometer radius
     user_gonio_radius = 0 # Establish variable as global
     confirm_radius = False # Establish radius confirmation globally to enable elif statement to update radius if user doesn't like the preconfig
@@ -563,6 +572,13 @@ a 13 mm wide beam.\nEnter here:""", 0.0001, ) # Add lower bound to make sure the
     if user_max_2theta >= 100: # Loose advice, as this program does not flag beam knife interference at high angle
         print("Caution: if you are using a beam knife, check with your manufacturer to see if the knife will cut signal off at high angle.")
 
-    # Begin with thickness check, if the user's sample has usable ACs.
+    # Begin with thickness check, if the user's sample is indicated to be compatible with thickness check.
     if user_diffraction_sample.z_check:
-        print()
+        user_intensity, user_z_bool = beer_lambert(user_diffraction_sample.LAC, user_diffraction_sample.depth)
+        print("""
+The depth of your sample is {depth:.2f} mm and the linear attenuation coefficient is {LAC:.2f} cm^-1. At the deepest point of your
+sample, the incident x-rays will be {int:.1g}% of their original intensity.""".format(depth=user_diffraction_sample.depth, LAC=user_diffraction_sample.LAC, int=user_intensity))
+        if user_z_bool: # If the sample well is sufficiently deep for the sample
+            print("This means your sample may be considered \"infinitely thick\", and you will not see artifacts from your sample holder.")
+        elif not user_z_bool: # If the sample well is not sufficiently deep for the sample
+            print("This means your sample may be too think for your holder, and you may see artifacts from your sample holder, especially at high angle.")
