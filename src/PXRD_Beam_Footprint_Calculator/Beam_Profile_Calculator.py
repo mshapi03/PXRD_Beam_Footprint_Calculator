@@ -10,7 +10,8 @@ import os
 # Library to allow code to read and write JSON files
 import json
 # Library to allow for trigonometric calculations
-import math
+import numpy as np
+from scipy.optimize import fsolve
 # Library to allow code to create and output visualizations
 import matplotlib as mpl
 
@@ -252,14 +253,14 @@ def update_JSON(filepath, key_to_update, new_value):
     # From this and trig, the constant d = 114.59 mm was worked from tan(phi/2) = (w/2)/d
     # As Bruker is the only vendor to the author's knowledge that uses mm, it is assumed these relations hold true for other models and vendors which do the same
 def DS_phi_from_mm(millimeter):
-    phi = math.degrees(2*math.atan((millimeter/229.18)))
+    phi = np.degrees(2*np.arctan((millimeter/229.18)))
     return phi
 
 # Function to take LAC in cm^-1 and thickness in mm and return the percent attenuation
 def beer_lambert(LAC, thickness):
     thick_enough = False
     product = (-1) * (LAC * (thickness / 10)) # Convert thickness in mm to cm to get dimensionless exponent
-    intensity_ratio = math.exp(product)
+    intensity_ratio = np.exp(product)
     if intensity_ratio < 0.05: # If incident x-rays are attenuated to < 5% of their original intensity
         thick_enough = True
     else:
@@ -268,12 +269,12 @@ def beer_lambert(LAC, thickness):
 
 # Function to return the portion of beam length from incident side to midway point (shorter)
 def l_short(radius, phi, theta):
-    l_one = (radius * math.sin(phi/2))/(math.sin(theta + (phi/2)))
+    l_one = (radius * np.sin(phi/2))/(np.sin(theta + (phi/2)))
     return l_one
 
 # Function to return the portion of beam length from midway point to diffracted side (long)
 def l_long(radius, phi, theta):
-    l_two = (radius * math.sin(phi/2))/(math.sin(theta - (phi/2)))
+    l_two = (radius * np.sin(phi/2))/(np.sin(theta - (phi/2)))
     return l_two
 
 # Function which finds total length from l_short and l_long in FDS mode
