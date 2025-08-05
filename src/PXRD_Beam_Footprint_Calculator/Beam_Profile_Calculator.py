@@ -231,7 +231,8 @@ def update_JSON(filepath, key_to_update, new_value):
             data[key_to_update] = [] # Establish an empty list and append, else we get each character of the string appended
             data[key_to_update].append(new_value)
         else: # If the key passed to update_JSON already exists, append the new value to the list
-            data[key_to_update] = data[key_to_update].append(new_value)
+            print(data[key_to_update])
+            data[key_to_update].append(new_value)
     try: # Overwrite the previous JSON file with new update
         with open(filepath, "w") as jsonfile:
             json.dump(data, jsonfile, indent=4)
@@ -490,11 +491,11 @@ optics other than typical slits (i.e. mirrors), or the impact of a beam knife bl
         fixed_or_variable = user_pick_from("Are you operating your instrument in fixed divergence slit (FDS) or variable/automatic divergence slit (ADS) mode?", ["Fixed", "Variable", "Explain"])
         if fixed_or_variable == "Explain": # Offer more information to user on this choice.
             print("""FDS means your divergence slit opening remains constant during your experiment, while the beam length 
-    changes. This is a constant irradiated volume experiment compatible with Rietveld analysis. ADS refers to a divergence 
-    slit opening changing over the course of the experiment to keep a constant irradiated length (and therefore area). ADS 
-    is commonly used for thin-film samples, and not all instruments have ADS capabilities. This choice determines how certain
-    key math is performed, as well as whether you are presented with a graph of beam length vs. two-theta or divergence slit
-    opening vs. two-theta.""")
+changes. This is a constant irradiated volume experiment compatible with Rietveld analysis. ADS refers to a divergence 
+slit opening changing over the course of the experiment to keep a constant irradiated length (and therefore area). ADS 
+is commonly used for thin-film samples, and not all instruments have ADS capabilities. This choice determines how certain
+key math is performed, as well as whether you are presented with a graph of beam length vs. two-theta or divergence slit
+opening vs. two-theta.""")
             # Prompt user to update to value to one of two options
             fixed_or_variable = user_pick_from("Are you operating your instrument in fixed divergence slit (FDS) or variable/automatic divergence slit (ADS) mode?", ["Fixed", "Variable"])
 
@@ -549,10 +550,10 @@ a 13 mm wide beam.\nEnter here:""", 0.0001, ) # Add lower bound to make sure the
 
     # Get user two-theta range as minimum and maximum with appropriate flags
     user_min_2theta = get_user_float("Please enter your minimum 2theta angle in degrees:", 0, 180)
-    if user_diffraction_sample.min_2theta < user_min_2theta:
+    if user_diffraction_sample.min_2theta > user_min_2theta:
         print("Caution: your sample's minimum advisable angle is {minimum} degrees and you intend to begin at {user} degrees. Some of your incident beam may be blocked.".format(minimum=user_diffraction_sample.min_2theta, user=user_min_2theta))
     user_max_2theta = get_user_float("Please enter your maximum 2theta angle in degrees:", 0, 180)
-    if user_max_2theta > 100: # Loose advice, as this program does not flag beam knife interference at high angle
+    if user_max_2theta >= 100: # Loose advice, as this program does not flag beam knife interference at high angle
         print("Caution: if you are using a beam knife, check with your manufacturer to see if the knife will cut signal off at high angle.")
 
 

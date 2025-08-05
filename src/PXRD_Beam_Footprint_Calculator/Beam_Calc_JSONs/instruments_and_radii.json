@@ -19,5 +19,7 @@
     "AXRD Theta-Theta": 191,
     "AXRD LPD": 200,
     "AXRD LPD-HR": 191,
-    "AXRD LPD-HT": 200
+    "AXRD LPD-HT": 200,
+    "TestInstr": 300.0,
+    "TestInstru": 350.0
 }
