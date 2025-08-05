@@ -62,6 +62,18 @@ class SampleChemistry:
             mass_atten_coef += relative_abundance_dict[element] * MAC_dict[element]
         self.mass_atten_coefficient = mass_atten_coef # Becomes a callable parameter as it is a quality of the sample
 
+    def calculate_bad_density(self, atomic_info, relative_abundance_dict):
+        # Bad density really refers to a weighted average density
+        # This is a completely unfounded way to calculate density that will create huge errors, but allows me to test the rest of the code
+        bad_density = 0 # Establish the variable to be returned as a number
+        # atomic_info is in the form {"element": ["Z", "Element", "Z/A", "I (eV)", "Density (g/cm3)", "Molecular Weight (g/mol)]"
+        # rel_abu_dict is of the form {"element": abundance}
+        for element in relative_abundance_dict.keys(): # Look at each element in the sample
+            bad_density += relative_abundance_dict[element] * float(atomic_info[element][4])
+            # relative_abundance_dict[element] is the percent abundance as 0.10 for 10%
+            # atomic_info[element] accesses the list, where density is atomic_info[element][4]
+        return bad_density
+
 # ---------- Simplifying functions ----------
 
 # Exception-handling version of chemparse's formula parsing function:
@@ -277,10 +289,7 @@ tube anode type from below or enter a custom value.""", ["Cu", "Co", "Mo", "Cr",
         sample_MAC = user_sample.mass_atten_coefficient
 
     # Debugging
-    user_sample.print_all_information()
-    print(sample_atomic_info)
-
-
+    print(user_sample.calculate_bad_density(sample_atomic_info, user_sample.relative_abundance))
 
     # Allow the user to decide to end the script or pass thickness boolean and sample MAC back to Beam_Profile_Calculator and resume
     end_of_script_protocol(check_thickness, sample_MAC)
