@@ -231,7 +231,6 @@ def update_JSON(filepath, key_to_update, new_value):
             data[key_to_update] = [] # Establish an empty list and append, else we get each character of the string appended
             data[key_to_update].append(new_value)
         else: # If the key passed to update_JSON already exists, append the new value to the list
-            print(data[key_to_update])
             data[key_to_update].append(new_value)
     try: # Overwrite the previous JSON file with new update
         with open(filepath, "w") as jsonfile:

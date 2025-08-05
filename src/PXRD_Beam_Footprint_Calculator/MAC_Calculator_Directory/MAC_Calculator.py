@@ -154,10 +154,9 @@ def get_edge_info(stoich_dict):
     return sample_x_ray_energy_dictionary
 
 # Flag if the incident energy is close to any known sample edges
-def beam_and_sample_interference(atoms_and_x_ray_energies, incident_energy):
+def beam_and_sample_interference(atoms_and_x_ray_energies, incident_energy, warning_counter=0):
     incident_energy_num = float(incident_energy)
     print("Referencing the atoms in your sample against the incident energy...")
-    warning_counter = 0 # Logs the number of times an interference is found
     for element in atoms_and_x_ray_energies: # Iterate through elements in the sample
         for edge in atoms_and_x_ray_energies[element]: # Iterate through edges for the element
             # Raise warning if the edge is within 1 keV of the incident energy
@@ -255,12 +254,13 @@ tube anode type from below or enter a custom value.""", ["Cu", "Co", "Mo", "Cr",
     print("Checking for potential undesirable interactions between incident beam and sample...")
     beam_and_sample_interference(sample_x_ray_edges, incident_energy)
     # Prompt user to see all x-ray edges for their sample to do a manual check
-    manual_interference_checker = y_or_n_confirmation("Would you like to examine the known absorption edges of the atoms in your sample?")
-    if manual_interference_checker: # Print all edges with user-friendly formatting
-        for element, interference_list in sample_x_ray_edges.items():
-            print("{}:".format(element))
-            for edge in interference_list:
-                print("{edge} edge: {energy} keV, wavelength: {wavelength} angstroms.".format(edge=edge[0], energy=edge[1], wavelength=edge[2]))
+    if sample_x_ray_edges: # If the sample x_ray_edges dictionary is not empty (prevents prompt below for, e.g. Np2O7, when there are no edges to display)
+        manual_interference_checker = y_or_n_confirmation("Would you like to examine the known absorption edges of the atoms in your sample?")
+        if manual_interference_checker: # Print all edges with user-friendly formatting
+            for element, interference_list in sample_x_ray_edges.items():
+                print("{}:".format(element))
+                for edge in interference_list:
+                    print("{edge} edge: {energy} keV, wavelength: {wavelength} angstroms.".format(edge=edge[0], energy=edge[1], wavelength=edge[2]))
 
     if check_thickness: # Calculate sample MAC if atomic libraries are generated correctly
         print("Attempting to calculate the MAC of your sample...")
@@ -275,6 +275,12 @@ tube anode type from below or enter a custom value.""", ["Cu", "Co", "Mo", "Cr",
         # Confirm success with user as print statement
         print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
         sample_MAC = user_sample.mass_atten_coefficient
+
+    # Debugging
+    user_sample.print_all_information()
+    print(sample_atomic_info)
+
+
 
     # Allow the user to decide to end the script or pass thickness boolean and sample MAC back to Beam_Profile_Calculator and resume
     end_of_script_protocol(check_thickness, sample_MAC)
