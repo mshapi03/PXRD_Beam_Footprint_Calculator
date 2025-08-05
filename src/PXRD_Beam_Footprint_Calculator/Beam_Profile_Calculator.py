@@ -10,7 +10,7 @@ import os
 # Library to allow code to read and write JSON files
 import json
 # Library to allow for trigonometric calculations
-from math import degrees, radians, atan, sin
+import math
 # Library to allow code to create and output visualizations
 import matplotlib as mpl
 
@@ -21,7 +21,7 @@ holder_shapes = ["Circle", "Rectangle"]
 
 # ---------- Class Definitions ----------
 class DiffractionSample:
-    def __init__(self, name, shape, z_check, diameter= 0, axi = 0, equi = 0, MAC = 0, depth = 0, min_2theta = 0):
+    def __init__(self, name, shape, z_check, diameter= 0, axi = 0, equi = 0, MAC = 0, LAC = 0, depth = 0, min_2theta = 0):
         self.name = name
         self.shape = shape
         self.min_2theta = min_2theta
@@ -32,7 +32,11 @@ class DiffractionSample:
             self.equi = equi
         self.z_check = z_check
         if self.z_check == True:
-            self.MAC = MAC
+            if MAC != 0: # prevents self.MAC from being instantiated as zero
+                self.MAC = MAC
+            else:
+                self.MAC = None # Set to none if user inputs LAC directly, but keeps len(vars()) of object constant
+            self.LAC = LAC
         self.depth = depth # Depth must be initialized even if MAC is not to allow users to write custom sample holders for future use
 
     def __repr__(self):
@@ -44,7 +48,7 @@ class DiffractionSample:
             string_2 = "dimensions {axi} mm by {equi} mm by {depth} mm deep".format(axi=self.axi, equi=self.equi, depth=self.depth)
         string_3 = ""
         if self.z_check == True:
-            string_3 = " and a MAC of {MAC} cm^2/g usable above {min_2theta} degrees 2theta.".format(MAC=self.MAC, min_2theta=self.min_2theta)
+            string_3 = " and attentuation coefficients of MAC of {MAC} cm^2/g (MAC) and {LAC} cm^-1 (LAC) usable above {min_2theta} degrees 2theta.".format(MAC=self.MAC, LAC=self.LAC, min_2theta=self.min_2theta)
         else:
             string_3 = " usable above {min_2theta} degrees 2theta.".format(min_2theta=self.min_2theta)
         return string_1 + string_2 + string_3
@@ -248,7 +252,7 @@ def update_JSON(filepath, key_to_update, new_value):
     # From this and trig, the constant d = 114.59 mm was worked from tan(phi/2) = (w/2)/d
     # As Bruker is the only vendor to the author's knowledge that uses mm, it is assumed these relations hold true for other models and vendors which do the same
 def DS_phi_from_mm(millimeter):
-    phi = degrees(2*atan((millimeter/229.18)))
+    phi = math.degrees(2*math.atan((millimeter/229.18)))
     return phi
 # ---------- Begin User-Facing Code ----------
 
@@ -302,16 +306,17 @@ best optics settings for your sample, sample holder, and diffractometer when col
     # Prompt the user to engage with the MAC_Calculator
     print("""This program has the capability to determine your sample's mass attenuation coefficient (MAC) if you (1) know 
 the incident radiation energy (or tube anode material) you will be using and (2) are gathering data on a sample which
-does not contain any elements above atomic number (Z) 92. This enables the program to ensure your sample thickness is 
-well-matched to the penetration depth of your beam.""")
-    throw_to_MAC = y_or_n_confirmation("Would you like to calculate your samples MAC?")
+does not contain any elements above atomic number (Z) 92. The program will also determine the linear attenuation coefficient 
+(LAC) if your sample's density is known, which enables the program to ensure your sample thickness is well-matched to the 
+penetration depth of your beam.""")
+    throw_to_MAC = y_or_n_confirmation("Would you like to calculate your samples ACs?")
     if not throw_to_MAC: # Do not throw to MAC_Calculator
-        estimate_MAC = y_or_n_confirmation("Would you like to provide an estimate of your sample's MAC?")
-        if estimate_MAC: # Provide an estimate of MAC
-            user_input_MAC = get_user_float("Please enter the MAC of your sample (cm^2/g):")
-            sample_MAC = float(user_input_MAC)
+        estimate_LAC = y_or_n_confirmation("Would you like to provide an estimate of your sample's LAC to be able to check your sample's thickness?")
+        if estimate_LAC: # Provide an estimate of MAC
+            user_input_LAC = get_user_float("Please enter the LAC of your sample (cm^-1):")
+            sample_LAC = float(user_input_LAC)
             check_thickness = True
-        elif not estimate_MAC: # Forgo sample thickness calculations
+        elif not estimate_LAC: # Forgo sample thickness calculations
             print("This program will not consider your sample's thickness.")
             check_thickness = False # Change global boolean to skip thickness calculations/visualizations
     elif throw_to_MAC: # Throw to MAC Calculator
@@ -332,7 +337,7 @@ well-matched to the penetration depth of your beam.""")
     # If the file does exist, the code below updates the check_thickness and sample_MAC values to that from MAC_Calculator
     if os.path.exists(MAC_Calc_Output):
         check_thickness, sample_MAC, sample_LAC = MAC_Output_Reader(MAC_Calc_Output)
-    # At this point, the thickness check boolean, MAC, and LAC value are updated and usable.
+    # At this point, the thickness check boolean and LAC value are updated and usable - MAC may be zero if LAC is user estimated within BPC.py.
     # Note that MAC will likely go unused in this code, but is still present for archival reasons
 
     # Prompt user for brand of instrument they are using:
@@ -411,20 +416,20 @@ well-matched to the penetration depth of your beam.""")
             user_holder_information[0] = user_holder_name # Update the user holder name to be the user input from above
 
     # Instantiate the DiffractionSample object with known information
-    if len(user_holder_information) == 5: # If the holder is circular
+    if user_holder_information[1] == "Circle": # If the holder is circular
         user_diffraction_sample = DiffractionSample(name=user_holder_information[0], shape=user_holder_information[1],
                                                     z_check=check_thickness, diameter=user_holder_information[2],
-                                                    MAC=sample_MAC, depth=user_holder_information[3],
+                                                    MAC=sample_MAC, LAC=sample_LAC, depth=user_holder_information[3],
                                                     min_2theta=user_holder_information[4])
-    elif len(user_holder_information) == 6: # If the holder is rectangular
+    else: # If the holder is rectangular/square
         user_diffraction_sample = DiffractionSample(name=user_holder_information[0], shape=user_holder_information[1],
                                                     z_check=check_thickness, axi=user_holder_information[2],
-                                                    equi=user_holder_information[3], MAC=sample_MAC,
+                                                    equi=user_holder_information[3], MAC=sample_MAC, LAC=sample_LAC,
                                                     depth=user_holder_information[4],
                                                     min_2theta=user_holder_information[5])
-    else: # should be inaccessible as user_holder_information should always have 5 or 6 entries
-        print("There was some issue in creating your sample - please restart the program.")
-        raise TypeError("user_holder_information should have length 5 or 6 for proper instantiation of the DiffractionSample class.")
+
+    # Debug
+    user_diffraction_sample.print_all_information()
 
     # Get goniometer radius
     user_gonio_radius = 0 # Establish variable as global
@@ -558,5 +563,6 @@ a 13 mm wide beam.\nEnter here:""", 0.0001, ) # Add lower bound to make sure the
     if user_max_2theta >= 100: # Loose advice, as this program does not flag beam knife interference at high angle
         print("Caution: if you are using a beam knife, check with your manufacturer to see if the knife will cut signal off at high angle.")
 
-
-    # Move on to the calculations and visualizations!
+    # Begin with thickness check, if the user's sample has usable ACs.
+    if user_diffraction_sample.z_check:
+        print()
