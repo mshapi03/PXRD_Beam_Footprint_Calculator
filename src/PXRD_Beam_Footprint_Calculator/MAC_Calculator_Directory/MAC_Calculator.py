@@ -1,5 +1,5 @@
 # Developed by Mitch S-A
-# Updated on July 29, 2025
+# Updated on August 5, 2025
 
 # ---------- Necessary imports ----------
 
@@ -73,6 +73,15 @@ class SampleChemistry:
             # relative_abundance_dict[element] is the percent abundance as 0.10 for 10%
             # atomic_info[element] accesses the list, where density is atomic_info[element][4]
         return bad_density
+
+    def calculate_sample_LAC(self, density):
+        try:
+            LAC = self.mass_atten_coefficient * density # Simple dimensional analysis: cm^-1 = cm^2/g * g/cm^3
+            self.LAC = LAC
+            print("Your sample's LAC is approximately {:.2f} cm^-1.".format(self.LAC))
+        except AttributeError as e:
+            print("Unable to calculate LAC due to an error: {e}".format(e=e))
+
 
 # ---------- Simplifying functions ----------
 
@@ -285,11 +294,31 @@ tube anode type from below or enter a custom value.""", ["Cu", "Co", "Mo", "Cr",
         # Call class method calculate_sample_MAC
         user_sample.calculate_sample_MAC(user_sample.relative_abundance, sample_MAC_dict) # Callable as user_sample.mass_atten_coefficient
         # Confirm success with user as print statement
-        print("Success. Your sample's MAC is approximately {:.2f} cm^2/g.".format(user_sample.mass_atten_coefficient))
+        print("\nSuccess. Your sample's MAC is approximately {:.2f} cm^2/g.\n".format(user_sample.mass_atten_coefficient))
         sample_MAC = user_sample.mass_atten_coefficient
 
-    # Debugging
-    print(user_sample.calculate_bad_density(sample_atomic_info, user_sample.relative_abundance))
+    if check_thickness and sample_MAC != 0: # If libraries are generate correctly and the MAC has been updated
+        sample_density = 0 # Establish variable to avoid scope errors
+        print("""To use your sample MAC to calculate beam penetration depth (in Beam_Profile_Calculator.py),
+we must multiply the MAC by your sample's density to obtain the linear attenuation coefficient (LAC).""")
+        density_confirmation = False
+        while not density_confirmation:
+            density_choice = user_pick_from("Please select from the following:", ["Enter density", "I do not have my sample density"])
+            if density_choice == "Enter density":
+                sample_density = get_user_float("Please enter your sample density in g/cm^3:", 0.0001)
+                density_confirmation = True
+            elif density_choice == "I do not have my sample density":
+                print("""If you cannot obtain your sample's density, you may ask the software to use a relative weighted average
+of atomic densities for the time being; however, owing to densities reliance on volume and the non-additive qualities of 
+volume as a property, this will be a highly erroneous calculation.""")
+                use_bad_density = y_or_n_confirmation("Use relative weighted average of atomic densities?")
+                if use_bad_density:
+                    sample_density = user_sample.calculate_bad_density(sample_atomic_info, user_sample.relative_abundance)
+                    print("Your sample's density is set at {:.2f} g/cm^3.".format(sample_density))
+                    density_confirmation = True
+                else:
+                    density_confirmation = False
+        user_sample.calculate_sample_LAC(sample_density)
 
     # Allow the user to decide to end the script or pass thickness boolean and sample MAC back to Beam_Profile_Calculator and resume
     end_of_script_protocol(check_thickness, sample_MAC)
