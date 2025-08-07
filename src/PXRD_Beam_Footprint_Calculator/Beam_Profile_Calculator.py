@@ -256,7 +256,7 @@ def DS_phi_from_mm(millimeter):
     phi = np.degrees(2*np.arctan((millimeter/229.18)))
     return phi
 
-# Function to take LAC in cm^-1 and thickness in mm and return the percent attenuation
+# Function to take LAC in cm^-1 and thickness in mm and return the percent attenuation and thick enough bool
 def beer_lambert(LAC, thickness):
     thick_enough = False
     product = (-1) * (LAC * (thickness / 10)) # Convert thickness in mm to cm to get dimensionless exponent
@@ -266,6 +266,17 @@ def beer_lambert(LAC, thickness):
     else:
         thick_enough = False
     return intensity_ratio, thick_enough
+
+# Function to take LAC in cm^-1 and thickness in mm and return the percent attenuation (above without the bool)
+def beer_lambert_atten(LAC, thickness):
+    product = (-1) * (LAC * (thickness / 10)) # Convert thickness in mm to cm to get dimensionless exponent
+    intensity_ratio = np.exp(product)
+    return intensity_ratio
+
+# Function to take LAC in cm^-1 and percent attenuation and return the required thickness in mm
+def beer_lambert_layer(LAC, prc_atten):
+    thickness = -np.log(prc_atten) / LAC
+    return thickness
 
 # Function to return the portion of beam length from incident side to midway point (shorter)
 def l_short(radius, phi_degrees, theta_degrees):
@@ -302,6 +313,19 @@ def phi_solver(length_mm, radius_mm, min_theta_degrees, max_theta_degrees, step_
         phi_solution = fsolve(ADS_equation_for_phi, initial_guess_phi, args=(length_mm, radius_mm, step_rad))
         plotting_data_set[step] = float(np.rad2deg(phi_solution[0])) # fsolve returns a one-item array, result will be in rad so convert to deg
     return plotting_data_set
+
+# Function to determine if rectangular beam can fit inside rectangular sample
+def rect_beam_overlap_checker(beam_width, beam_height, sample_width, sample_height):
+    return (beam_width <= sample_width and beam_height <= sample_height) # Returns True or False
+
+# Function to determine if rectangular beam can fit inside circular sample
+def circ_beam_overlap_checker(beam_width, beam_height, sample_radius):
+    half_width = beam_width / 2
+    half_height = beam_height / 2
+    # Calculate the distance from the center to any corner of the rectangle via Pythagorean Theorem
+    distance_to_corner = np.sqrt(half_width**2 + half_height**2)
+    # If the distance to the furthest corner is <= the sample's radius, the beam fits!
+    return distance_to_corner <= sample_radius # Returns True or False
 
 
 # ---------- Begin User-Facing Code ----------
@@ -624,6 +648,6 @@ sample, the incident x-rays will be {int:.1g}% of their original intensity.""".f
     # Generate data set experiment depending on FDS or ADS mode:
     if user_optics.mode == "FDS": # Generate dictionary of {theta: irradiated length}
         graphable_data_set = FDS_length(user_gonio_radius, user_optics.i_slit, user_min_2theta, user_max_2theta)
-    elif user_optics.mode == "ADS": # Generate dictionary of {theta: apera\ture size}
+    elif user_optics.mode == "ADS": # Generate dictionary of {theta: aperature size}
         graphable_data_set = phi_solver(user_optics.i_length, user_gonio_radius, user_min_2theta, user_max_2theta)
     print(graphable_data_set)

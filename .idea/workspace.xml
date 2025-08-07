@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Fix errors with radian and degree confusion">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Generate two-theta dependent data sets for FDS and ADS modes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs/preconfig_optics.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs/preconfig_optics.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -71,31 +70,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.Absorption_Edge_Reader.executor": "Run",
-    "Python.Atomic_LAC_Reader_and_Lists.executor": "Run",
-    "Python.Beam_Profile_Calculator.executor": "Run",
-    "Python.Density_Calculator.executor": "Run",
-    "Python.Elemental_Densities_CSV_to_JSON.executor": "Run",
-    "Python.MAC_Calculator.executor": "Run",
-    "Python.Main_Beam_Calculator.executor": "Run",
-    "Python.PXRD_Beam_Profile.executor": "Run",
-    "Python.PXRD_Sample_Considerations.executor": "Run",
-    "Python.PXRD_Sample_Considerations_V2.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.Absorption_Edge_Reader.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Atomic_LAC_Reader_and_Lists.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Beam_Profile_Calculator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Density_Calculator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Elemental_Densities_CSV_to_JSON.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MAC_Calculator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Main_Beam_Calculator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PXRD_Beam_Profile.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PXRD_Sample_Considerations.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PXRD_Sample_Considerations_V2.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/MAC_Calculator_Directory" />
@@ -133,14 +132,6 @@
       <workItem from="1752925198387" duration="5703000" />
       <workItem from="1753292217760" duration="31168000" />
       <workItem from="1754053746010" duration="66000" />
-    </task>
-    <task id="LOCAL-00008" summary="Add interference checker, move certain non-critical files, second &quot;working&quot; version">
-      <option name="closed" value="true" />
-      <created>1752505170818</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1752505170818</updated>
     </task>
     <task id="LOCAL-00009" summary="Map local Pycharm repo to Github">
       <option name="closed" value="true" />
@@ -526,7 +517,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754414346214</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="Generate two-theta dependent data sets for FDS and ADS modes">
+      <option name="closed" value="true" />
+      <created>1754416696604</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1754416696610</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -544,7 +543,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add logic to ask user if they want to save custom sample inputs to json and update .gitignore" />
     <MESSAGE value="Populate instruments_and_radii.json and test code before implementing JSON edit functionality to it" />
     <MESSAGE value="Update .gitignore and push branch" />
     <MESSAGE value="Fix elif/if error to allow user to update gonio radius for known instruments" />
@@ -569,7 +567,8 @@
     <MESSAGE value="Add FDS mode beam length calc functions" />
     <MESSAGE value="Change math library to numpy" />
     <MESSAGE value="Fix errors with radian and degree confusion" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix errors with radian and degree confusion" />
+    <MESSAGE value="Generate two-theta dependent data sets for FDS and ADS modes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Generate two-theta dependent data sets for FDS and ADS modes" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
