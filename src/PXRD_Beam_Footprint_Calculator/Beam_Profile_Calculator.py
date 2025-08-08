@@ -1,5 +1,5 @@
 # Developed by Mitch S-A
-# Updated on August 5, 2025
+# Updated on August 8, 2025
 
 # ---------- Necessary imports ----------
 
@@ -639,16 +639,14 @@ a 13 mm wide beam.\nEnter here:""", 0.0001, ) # Add lower bound to make sure the
     if user_max_2theta >= 100: # Loose advice, as this program does not flag beam knife interference at high angle
         print("Caution: if you are using a beam knife, check with your manufacturer to see if the knife will cut signal off at high angle.")
 
+    # Inform the user of graphic generation
+    generate_visuals_confirm = user_pick_from(
+"""Your beam visuals will now be generated. The code will end once you have closed the figure. Details on the compatability 
+of your optical choices with your sample will be written in the caption.""", ["See graphics"])
+
     # Begin with thickness check, if the user's sample is indicated to be compatible with thickness check.
     if user_diffraction_sample.z_check:
         user_intensity, user_z_bool = beer_lambert(user_diffraction_sample.LAC, user_diffraction_sample.depth)
-        print("""
-The depth of your sample is {depth:.2f} mm and the linear attenuation coefficient is {LAC:.2f} cm^-1. At the deepest point of your
-sample, the incident x-rays will be {int:.1g}% of their original intensity.""".format(depth=user_diffraction_sample.depth, LAC=user_diffraction_sample.LAC, int=user_intensity))
-        if user_z_bool: # If the sample well is sufficiently deep for the sample
-            print("This means your sample may be considered \"infinitely thick\", and you will not see artifacts from your sample holder.")
-        elif not user_z_bool: # If the sample well is not sufficiently deep for the sample
-            print("This means your sample may be too think for your holder, and you may see artifacts from your sample holder, especially at high angle.")
         # Calculate the thickness of a 10 micron (function takes mm, ergo 0.01 mm) layer of sample for graphically comparison
         atten_at_10_microns = beer_lambert_atten(user_diffraction_sample.LAC, 0.01)
         # Calculate thickness required to hit attenuation threshold (E.g. <5% of original intensity)
@@ -875,9 +873,36 @@ sample, the incident x-rays will be {int:.1g}% of their original intensity.""".f
 
     # Configure the figure-level elements, beginning with title
     fig.suptitle("Your Beam and Sample Interaction Visuals", fontsize=16, fontweight="bold", y=0.95)
-    # Fill out the caption with if statements a la __repr __ strings (FYI: TeX does not work here)
-    caption_text = ""
-    ### Add logic
+    # Text to remark on graphs 1 and 2
+    x_y_string = ""
+    # Logic to determine if the beam fits inside the sample and set the proper string to remark on graphs 1 and 2
+    if user_optics.mode == "FDS" and user_diffraction_sample.shape == "Circle":
+        x_y_string = "The graph on the left displays how the beam length will vary over your two-theta range. To the right, two rectangles represent the smallest and largest beam sizes superimposed on your circular sample."
+        user_x_y_bool = circ_beam_overlap_checker(list(graphable_data_set.values())[0], user_optics.mask, (user_diffraction_sample.diameter/2))
+    elif user_optics.mode == "FDS" and user_diffraction_sample.shape == "Rectangle":
+        x_y_string = "The graph on the left displays how the beam length will vary over your two-theta range. To the right, two rectangles represent the smallest and largest beam sizes superimposed on your rectangular sample."
+        user_x_y_bool = rect_beam_overlap_checker(list(graphable_data_set.values())[0], user_optics.mask, user_diffraction_sample.axi, user_diffraction_sample.equi)
+    elif user_optics.mode == "ADS" and user_diffraction_sample.shape == "Circle":
+        x_y_string = "The graph on the left displays how the divergence slit aperture width will vary over your two-theta range. To the right, a rectangle represents the X-ray beam's profile superimposed on your circular sample."
+        user_x_y_bool = circ_beam_overlap_checker(user_optics.i_length, user_optics.mask, (user_diffraction_sample.diameter/2))
+    elif user_optics.mode == "ADS" and user_diffraction_sample.shape == "Rectangle":
+        x_y_string = "The graph on the left displays how the divergence slit aperture width will vary over your two-theta range. To the right, a rectangle represents the X-ray beam's profile superimposed on your rectangular sample."
+        user_x_y_bool = rect_beam_overlap_checker(user_optics.i_length, user_optics.mask, user_diffraction_sample.axi, user_diffraction_sample.equi)
+    if user_x_y_bool:
+        x_y_modifier_string = " Your beam is completely within the bounds of your sample." # Text to add if beam fits on sample
+    if not user_x_y_bool:
+        x_y_modifier_string = " Your beam expands beyond the scope of the sample well, and your optic choices should be revised." # Text to add if beam does not fit on sample
+    # Text to remark on graph 3 if it exists
+    z_string = "" # z-string exists in same scope to allow for single additive statement to build caption.
+    if user_diffraction_sample.z_check:
+        if user_z_bool:  # If the sample well is sufficiently deep for the sample
+            passfail = "This means your sample may be considered \"infinitely thick\", and you will not see artifacts from your sample holder."
+        elif not user_z_bool:  # If the sample well is not sufficiently deep for the sample
+            passfail = "This means your sample may be too thin for your holder, and you may see artifacts from your sample holder (especially at high angle)."
+        z_string = "The depth of your sample is {depth:.2f} mm and the linear attenuation coefficient is {LAC:.2f} cm^-1. The inner pie chart displays how much of the X-ray beam would be attenuated by 10 microns of your sample. At the deepest point of your sample, the incident x-rays will be {int:.1g}% of their original intensity. {passfail}".format(
+            depth=user_diffraction_sample.depth, LAC=user_diffraction_sample.LAC, int=user_intensity, passfail=passfail)
+    # Fill out the caption with concatenation of above strings (FYI: TeX does not work here)
+    caption_text = x_y_string + x_y_modifier_string + z_string
     # Add the caption below the plot (adjust the y-coordinate, "y:" based on your plot's layout and figure size
     fig.text(0.5, 0.01,
              s=caption_text,
@@ -885,14 +910,14 @@ sample, the incident x-rays will be {int:.1g}% of their original intensity.""".f
              horizontalalignment='center',
              fontsize=10,
              color='black',
-             # bbox=dict(facecolor='white', alpha=0.5, boxstyle='round,pad=0.5')
+             #bbox=dict(facecolor=None, alpha=0.5, boxstyle='round,pad=0.5')
              )
     # Adjust the area between subplots
     fig.subplots_adjust(left=0.1, right=0.9, bottom=0.3, top=0.9, wspace=0.6)
     # Adjust the layout to prevent overlapping elements and increase padding
-    plt.tight_layout(pad=2.0)
+    plt.tight_layout(pad=3.0)
     # Actually display the figure!
     plt.show()
 
-    print("Code that will execute after the figure is saved/closed should go here!")
-    print("End of script")
+    print("Thank you for using the Beam Profile Calculator. Happy experimenting!")
+    print("Developed by: Mitch S-A")
