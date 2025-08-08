@@ -3,22 +3,27 @@
 
 # ---------- Necessary imports ----------
 
-# Library to allow code to interface with other Python scripts
+# Libraries to allow code to interface with other Python scripts
 import sys
 import subprocess
 import os
 # Library to allow code to read and write JSON files
 import json
-# Library to allow for trigonometric calculations
+# Libraries to allow for trigonometric calculations
 import numpy as np
 from scipy.optimize import fsolve
-# Library to allow code to create and output visualizations
-import matplotlib as mpl
+# Libraries to allow code to create and output visualizations
+import matplotlib.pyplot as plt # For bones of plotting
+import matplotlib.ticker as ticker # For granular axes adjustments
+import matplotlib.patches as patches # For adding circle and rectangle shapes to Cartesian graphs
 
 # ---------- Short Reference Dictionaries and Lists ----------
 
 # Simple list of holder shapes to more easily expand code applicability in the future
 holder_shapes = ["Circle", "Rectangle"]
+
+# Threshold to which incident intensity must be attenuated to pass the z_check
+attenuation_threshold = 0.05 # E.g. 0.05 means the X-ray beam must be attenuated to < 5% of it's original intensity by the sample
 
 # ---------- Class Definitions ----------
 class DiffractionSample:
@@ -261,7 +266,7 @@ def beer_lambert(LAC, thickness):
     thick_enough = False
     product = (-1) * (LAC * (thickness / 10)) # Convert thickness in mm to cm to get dimensionless exponent
     intensity_ratio = np.exp(product)
-    if intensity_ratio < 0.05: # If incident x-rays are attenuated to < 5% of their original intensity
+    if intensity_ratio < attenuation_threshold: # If incident x-rays are attenuated to (E.g. < 5%) of their original intensity
         thick_enough = True
     else:
         thick_enough = False
@@ -644,10 +649,155 @@ sample, the incident x-rays will be {int:.1g}% of their original intensity.""".f
             print("This means your sample may be considered \"infinitely thick\", and you will not see artifacts from your sample holder.")
         elif not user_z_bool: # If the sample well is not sufficiently deep for the sample
             print("This means your sample may be too think for your holder, and you may see artifacts from your sample holder, especially at high angle.")
+        # Calculate the thickness of a 10 micron (function takes mm, ergo 0.01 mm) layer of sample for graphically comparison
+        atten_at_10_microns = beer_lambert_atten(user_diffraction_sample.LAC, 0.01)
+        # Calculate thickness required to hit attenuation threshold (E.g. <5% of original intensity)
+        layer_to_pass_threshold = beer_lambert_layer(user_diffraction_sample.LAC, attenuation_threshold)
+
+    ### Decide if we want just figures as the output, or verbal prompts as well;
+    ### if the latter, standardize to appear before or after figure and change the above code block accordingly
 
     # Generate data set experiment depending on FDS or ADS mode:
     if user_optics.mode == "FDS": # Generate dictionary of {theta: irradiated length}
         graphable_data_set = FDS_length(user_gonio_radius, user_optics.i_slit, user_min_2theta, user_max_2theta)
     elif user_optics.mode == "ADS": # Generate dictionary of {theta: aperature size}
         graphable_data_set = phi_solver(user_optics.i_length, user_gonio_radius, user_min_2theta, user_max_2theta)
-    print(graphable_data_set)
+
+    # Begin portion of the code which generates a visual figure
+    #    Recall: convention is that
+    #       axial is the length of sample well along the beam direction
+    #       equitorial is the width of the sample orthogonal to beam direction
+
+    # Apply global font settings for matplotlib figure
+    plt.rcParams['mathtext.fontset'] = 'stix'
+    plt.rcParams['font.family'] = 'STIXGeneral'
+
+    # If the user's sample is compatible with thickness check, generate a three-graph figure
+    if user_diffraction_sample.z_check:
+        fig, graphs = plt.subplots(1, 3, figsize=(18, 6), gridspec_kw={'height_ratios': [1], 'width_ratios': [1, 1, 1]})
+    # Else, generate a two-graph figure
+    elif not user_diffraction_sample.z_check:
+        fig, graphs = plt.subplots(1, 2, figsize=(12, 6), gridspec_kw={'height_ratios': [1], 'width_ratios': [1, 1]})
+
+    # Format Plot One: the graph of beam length (for FDS mode) or aperture size (for ADS mode) against two-theta
+    two_theta = graphs[0] # Establish the first Axes object
+    # Establish grid with minor ticks
+    two_theta.minorticks_on()  # Turns minor gridlines on the graph
+    two_theta.grid(True, which="both", linestyle="-", alpha=0.75, linewidth=0.5)  # "which" kwarg adds gridlines for minor ticks
+    # Establish gridline settings
+    two_theta.xaxis.set_major_formatter(ticker.StrMethodFormatter("{x:,.0f}"))  # Zero decimal places for x-axis
+    two_theta.yaxis.set_major_formatter(ticker.StrMethodFormatter("{x:,.2f}"))  # Two decimal places for y-axis
+    # Establish settings for x-axis (two-theta)
+    two_theta.set_xlim(0, max(list(graphable_data_set.keys())) + 10) # 0, 10 + the user's max two-theta
+    two_theta.set_xlabel(r"$2\theta$ (°)", fontsize=12)
+    # Check to see optical mode and direct y-axis settings accordingly
+    if user_optics.mode == "FDS":
+        two_theta.plot(list(graphable_data_set.keys()), list(graphable_data_set.values()), label="FDS", color="blue")
+        two_theta.set_title(r"$\text{Beam Length vs. } 2\theta$" ,fontsize=14)
+        two_theta.set_ylim(0, max(list(graphable_data_set.values())) + 5) # 0, 5 + the user's max beam length
+        two_theta.set_ylabel(r"Beam Length (mm)", fontsize=12)
+        # Check to see sample shape and add a horizontal line representing the longest axial dimension of the sample well
+        if user_diffraction_sample.shape == "Circle":
+            two_theta.axhline(user_diffraction_sample.diameter, color="black", linewidth=1)
+        elif user_diffraction_sample.shape == "Rectangle":
+            two_theta.axhline(user_diffraction_sample.axi, color="black", linewidth=1)
+    elif user_optics.mode == "ADS":
+        two_theta.plot(list(graphable_data_set.keys()), list(graphable_data_set.values()), label="ADS", color="red")
+        two_theta.set_title(r"$\text{Aperature Width vs. } 2\theta$", fontsize=14)
+        two_theta.set_ylim(0, max(list(graphable_data_set.values())) + 0.5)  # 0, 0.5 + the user's max aperture opening
+        two_theta.set_ylabel(r"Aperature Width (mm)", fontsize=12)
+        # Add a standard horizontal line at 1 mm
+        two_theta.axhline(1, color="black", linewidth=1)
+    # Add legend now that a label has been generated
+    two_theta.legend(edgecolor="black", frameon=True, framealpha=1, loc="upper right")
+
+    # Format Plot 2: visual of beam profile onto sample holder
+    beam_profile = graphs[1]
+    # Add horizontal line at origin to specify the plane of the gonio
+    beam_profile.axhline(0, color="black", linewidth=1.5, label="Plane of the Goniometer")
+    # Define positional elements to reference and set locations of patches
+    origin = (0, 0)
+    # Set the aspect ratio to 'equal' to ensure the circle looks like a circle
+    beam_profile.set_aspect('equal', adjustable='box')
+    # Add axis labels and a graph title
+    beam_profile.set_xlabel("Axial Distance (mm)", fontsize=12)
+    beam_profile.set_ylabel("Equitorial Distance (mm)", fontsize=12)
+    beam_profile.set_title("Beam Profile projected onto Sample Surface", fontsize=14)
+    # Add legend
+    beam_profile.legend(edgecolor="black", frameon=True, framealpha=1, loc="upper right")
+    # Four paths possible, as permutations of ADS vs. FDS and rectangular vs. circular sample
+    if user_optics.mode == "FDS" and user_diffraction_sample.shape == "Circle":
+        # Create 2 rectangle patches and 1 circle patch, apply them (.add_patch), set axis limits (.set_xlim/.set_ylim)
+        # circle sample needs origin, (user_diffraction_sample.diameter/2)
+        # min_beam needs graphable_data_set.values()[-1] for x, user_optics.mask for y
+        # max_beam needs graphable_data_set.values()[0] for x, user_optics.mask for y
+        pass
+    elif user_optics.mode == "FDS" and user_diffraction_sample.shape == "Rectangle":
+        # Create 3 rectangle patches, apply them, set axis limits
+        # rect sample needs user_diffraction_sample.axi for x, user_diffraction_sample.equi for y
+        # min_beam and max_beam as above
+        pass
+    elif user_optics.mode == "ADS" and user_diffraction_sample.shape == "Circle":
+        # Create 1 rectangle patch and 1 circle patch, apply them, set axis limits
+        # circle sample as above
+        # min_beam needs user_optics.i_length for x, user_optics.mask for y
+        pass
+    elif user_optics.mode == "ADS" and user_diffraction_sample.shape == "Rectangle":
+        # Create 2 rectangle patches, apply them, set axis limits
+        # Follow as above
+        pass
+
+    # Check if we have a third graph to generate by virtue of z_check:
+    if user_diffraction_sample.z_check:
+        # Format Plot 3: Beam attenuation by sample as represented with pie chart
+        depth_pie = graphs[2]
+        # Set title
+        depth_pie.set_title("Beam Attenuation Percentage", fontsize=14)
+        # Define labels for the pie chart
+        pie_labels = ["Attenuated", "Unattenuated", "10 um atten.", "10 um unatten."]
+        # Ensure the pie chart renders as a circle with an equal aspect ratio
+        depth_pie.set(aspect="equal")
+        # Create pie chart data to pass to graphs
+        user_outer_pie = [1 - user_intensity, user_intensity] # Outer pie chart of user's sample
+        default_inner_pie = [1 - atten_at_10_microns, atten_at_10_microns]  # Inner pie chart that shows attenuation of 10 microns
+        # Create outer pie chart which shows the user's attenuation
+        depth_pie.pie(user_outer_pie, labels=None,
+                      colors=["green", "red"],
+                      radius=1,
+                      autopct='%1.1f%%',
+                      pctdistance=1.2,
+                      wedgeprops={'width': 0.3, 'linewidth': 0.3, 'edgecolor': 'white'})
+        # Create inner pie chart which shows the attenuation of 10 microns of the user's sample
+        depth_pie.pie(default_inner_pie, labels=None,
+                      colors=["lightgreen", "salmon"],
+                      radius=0.7,
+                      autopct='%1.1f%%',
+                      pctdistance=0.8,
+                      wedgeprops={'width': 0.3, 'linewidth': 0.3, 'edgecolor': 'white'})
+        # Create master legend instead on-segment labels
+        depth_pie.legend(labels=pie_labels, edgecolor="black", frameon=True, framealpha=1, loc="lower right")
+
+    # Configure the figure-level elements, beginning with title
+    fig.suptitle("Your Beam and Sample Interaction Visuals", fontsize=16, fontweight="bold", y=0.95)
+    # Fill out the caption with if statements a la __repr __ strings (FYI: TeX does not work here)
+    caption_text = ""
+    ### Add logic
+    # Add the caption below the plot (adjust the y-coordinate, "y:" based on your plot's layout and figure size
+    fig.text(0.5, 0.01,
+             s=caption_text,
+             wrap=True,  # Wraps text within the figure bounds
+             horizontalalignment='center',
+             fontsize=10,
+             color='black',
+             # bbox=dict(facecolor='white', alpha=0.5, boxstyle='round,pad=0.5')
+             )
+    # Adjust the area between subplots
+    fig.subplots_adjust(left=0.1, right=0.9, bottom=0.3, top=0.9, wspace=0.6)
+    # Adjust the layout to prevent overlapping elements and increase padding
+    plt.tight_layout(pad=2.0)
+    # Actually display the figure!
+    plt.show()
+
+    print("Code that will execute after the figure is saved/closed should go here!")
+    print("End of script")
+
