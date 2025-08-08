@@ -723,29 +723,125 @@ sample, the incident x-rays will be {int:.1g}% of their original intensity.""".f
     beam_profile.set_xlabel("Axial Distance (mm)", fontsize=12)
     beam_profile.set_ylabel("Equitorial Distance (mm)", fontsize=12)
     beam_profile.set_title("Beam Profile projected onto Sample Surface", fontsize=14)
-    # Add legend
-    beam_profile.legend(edgecolor="black", frameon=True, framealpha=1, loc="upper right")
     # Four paths possible, as permutations of ADS vs. FDS and rectangular vs. circular sample
     if user_optics.mode == "FDS" and user_diffraction_sample.shape == "Circle":
-        # Create 2 rectangle patches and 1 circle patch, apply them (.add_patch), set axis limits (.set_xlim/.set_ylim)
-        # circle sample needs origin, (user_diffraction_sample.diameter/2)
-        # min_beam needs graphable_data_set.values()[-1] for x, user_optics.mask for y
-        # max_beam needs graphable_data_set.values()[0] for x, user_optics.mask for y
-        pass
+        # Create 1 circle patch for sample and 2 rectangle patches for min and max beam
+        circle_sample = patches.Circle(origin, (user_diffraction_sample.diameter)/2,
+                        label="Sample surface",
+                        edgecolor='blue',  # Color of the circle's border
+                        facecolor='lightblue',  # Fill color of the circle
+                        linewidth=1,  # Width of the border
+                        alpha=0.7)  # Transparency
+        min_beam_bottom_left = ((0 - (list(graphable_data_set.values())[-1] / 2)), 0 - (user_optics.mask / 2))  # Position the rectangle centered over the origin
+        min_beam = patches.Rectangle(min_beam_bottom_left, list(graphable_data_set.values())[-1], user_optics.mask,
+                                            label="Smallest beam profile",
+                                            edgecolor='red',  # Color of the rectangle's border
+                                            facecolor='salmon',  # Fill color of the rectangle
+                                            linewidth=1,  # Width of the border
+                                            alpha=0.6)  # Transparency
+        max_beam_bottom_left = ((0 - (list(graphable_data_set.values())[0] / 2)), 0 - (user_optics.mask / 2))  # Position the rectangle centered over the origin
+        max_beam = patches.Rectangle(max_beam_bottom_left, list(graphable_data_set.values())[0], user_optics.mask,
+                                            label="Smallest beam profile",
+                                            edgecolor='red',  # Color of the rectangle's border
+                                            facecolor='salmon',  # Fill color of the rectangle
+                                            linewidth=1,  # Width of the border
+                                            alpha=0.6)  # Transparency
+        # Apply the patches to the plot
+        beam_profile.add_patch(circle_sample)
+        beam_profile.add_patch(min_beam)
+        beam_profile.add_patch(max_beam)
+        # Set axis limits for x and y
+        beam_profile.set_xlim((-1 * (user_diffraction_sample.diameter / 2) - 5, (user_diffraction_sample.diameter / 2) + 5))
+        beam_profile.set_ylim((-1 * (user_diffraction_sample.diameter / 2) - 5, (user_diffraction_sample.diameter / 2) + 5))
     elif user_optics.mode == "FDS" and user_diffraction_sample.shape == "Rectangle":
         # Create 3 rectangle patches, apply them, set axis limits
-        # rect sample needs user_diffraction_sample.axi for x, user_diffraction_sample.equi for y
-        # min_beam and max_beam as above
-        pass
+        # Create 3 rectangle patches for sample, min, and max beam
+        rect_sample_bottom_left = ((0 - (user_diffraction_sample.axi / 2)),
+                                0 - (user_diffraction_sample.equi / 2)) # Position the rectangle centered over the origin
+        rect_sample = patches.Rectangle(rect_sample_bottom_left, user_diffraction_sample.axi, user_diffraction_sample.equi,
+                                       label="Sample surface",
+                                       edgecolor='blue',  # Color of the rectangle's border
+                                       facecolor='lightblue',  # Fill color of the rectangle
+                                       linewidth=1,  # Width of the border
+                                       alpha=0.7)  # Transparency
+        min_beam_bottom_left = ((0 - (list(graphable_data_set.values())[-1] / 2)),
+                                0 - (user_optics.mask / 2))  # Position the rectangle centered over the origin
+        min_beam = patches.Rectangle(min_beam_bottom_left, list(graphable_data_set.values())[-1], user_optics.mask,
+                                     label="Smallest beam profile",
+                                     edgecolor='red',  # Color of the rectangle's border
+                                     facecolor='salmon',  # Fill color of the rectangle
+                                     linewidth=1,  # Width of the border
+                                     alpha=0.6)  # Transparency
+        max_beam_bottom_left = ((0 - (list(graphable_data_set.values())[0] / 2)),
+                                0 - (user_optics.mask / 2))  # Position the rectangle centered over the origin
+        max_beam = patches.Rectangle(max_beam_bottom_left, list(graphable_data_set.values())[0], user_optics.mask,
+                                     label="Smallest beam profile",
+                                     edgecolor='red',  # Color of the rectangle's border
+                                     facecolor='salmon',  # Fill color of the rectangle
+                                     linewidth=1,  # Width of the border
+                                     alpha=0.6)  # Transparency
+        # Apply the patches to the plot
+        beam_profile.add_patch(rect_sample)
+        beam_profile.add_patch(min_beam)
+        beam_profile.add_patch(max_beam)
+        # Set axis limits for x and y
+        beam_profile.set_xlim(
+            (-1 * (user_diffraction_sample.axi / 2) - 5, (user_diffraction_sample.axi / 2) + 5))
+        beam_profile.set_ylim(
+            (-1 * (user_diffraction_sample.equi / 2) - 5, (user_diffraction_sample.equi / 2) + 5))
     elif user_optics.mode == "ADS" and user_diffraction_sample.shape == "Circle":
-        # Create 1 rectangle patch and 1 circle patch, apply them, set axis limits
-        # circle sample as above
-        # min_beam needs user_optics.i_length for x, user_optics.mask for y
-        pass
+        # Create 1 circle patch for the sample and 1 rectangle patch for beam
+        circle_sample = patches.Circle(origin, (user_diffraction_sample.diameter) / 2,
+                                       label="Sample surface",
+                                       edgecolor='blue',  # Color of the circle's border
+                                       facecolor='lightblue',  # Fill color of the circle
+                                       linewidth=1,  # Width of the border
+                                       alpha=0.7)  # Transparency
+        rect_beam_bottom_left = ((0 - (user_optics.i_length / 2)),
+                                0 - (user_optics.mask / 2))  # Position the rectangle centered over the origin
+        rect_beam = patches.Rectangle(rect_beam_bottom_left, user_optics.i_length, user_optics.mask,
+                                     label="Beam profile",
+                                     edgecolor='red',  # Color of the rectangle's border
+                                     facecolor='salmon',  # Fill color of the rectangle
+                                     linewidth=1,  # Width of the border
+                                     alpha=0.6)  # Transparency
+        # Add patches to the plot
+        beam_profile.add_patch(circle_sample)
+        beam_profile.add_patch(rect_beam)
+        # Set axis limits for x and y
+        beam_profile.set_xlim(
+            (-1 * (user_diffraction_sample.diameter / 2) - 5, (user_diffraction_sample.diameter / 2) + 5))
+        beam_profile.set_ylim(
+            (-1 * (user_diffraction_sample.diameter / 2) - 5, (user_diffraction_sample.diameter / 2) + 5))
     elif user_optics.mode == "ADS" and user_diffraction_sample.shape == "Rectangle":
-        # Create 2 rectangle patches, apply them, set axis limits
-        # Follow as above
-        pass
+        # Create 2 rectangle patches for the sample and the beam
+        rect_sample_bottom_left = ((0 - (user_diffraction_sample.axi / 2)),
+                                   0 - (user_diffraction_sample.equi / 2))  # Position the rectangle centered over the origin
+        rect_sample = patches.Rectangle(rect_sample_bottom_left, user_diffraction_sample.axi,
+                                        user_diffraction_sample.equi,
+                                        label="Sample surface",
+                                        edgecolor='blue',  # Color of the rectangle's border
+                                        facecolor='lightblue',  # Fill color of the rectangle
+                                        linewidth=1,  # Width of the border
+                                        alpha=0.7)  # Transparency
+        rect_beam_bottom_left = ((0 - (user_optics.i_length / 2)),
+                                 0 - (user_optics.mask / 2))  # Position the rectangle centered over the origin
+        rect_beam = patches.Rectangle(rect_beam_bottom_left, user_optics.i_length, user_optics.mask,
+                                      label="Beam profile",
+                                      edgecolor='red',  # Color of the rectangle's border
+                                      facecolor='salmon',  # Fill color of the rectangle
+                                      linewidth=1,  # Width of the border
+                                      alpha=0.6)  # Transparency
+        # Add patches to the plot
+        beam_profile.add_patch(rect_sample)
+        beam_profile.add_patch(rect_beam)
+        # Set axis limits for x and y
+        beam_profile.set_xlim(
+            (-1 * (user_diffraction_sample.axi / 2) - 5, (user_diffraction_sample.axi / 2) + 5))
+        beam_profile.set_ylim(
+            (-1 * (user_diffraction_sample.equi / 2) - 5, (user_diffraction_sample.equi / 2) + 5))
+    # Add legend after label kwargs are established
+    beam_profile.legend(edgecolor="black", frameon=True, framealpha=1, loc="upper right")
 
     # Check if we have a third graph to generate by virtue of z_check:
     if user_diffraction_sample.z_check:
@@ -800,4 +896,3 @@ sample, the incident x-rays will be {int:.1g}% of their original intensity.""".f
 
     print("Code that will execute after the figure is saved/closed should go here!")
     print("End of script")
-

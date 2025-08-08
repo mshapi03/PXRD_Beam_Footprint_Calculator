@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add extra beer-lambert functions, beam-sample checker functions">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Add graphical bones and minimal testing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
     </list>
@@ -132,14 +132,6 @@
       <workItem from="1752925198387" duration="5703000" />
       <workItem from="1753292217760" duration="31168000" />
       <workItem from="1754053746010" duration="66000" />
-    </task>
-    <task id="LOCAL-00010" summary="Reorganize and rename files">
-      <option name="closed" value="true" />
-      <created>1752686879757</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1752686879757</updated>
     </task>
     <task id="LOCAL-00011" summary="Move main STIXE script and update README">
       <option name="closed" value="true" />
@@ -525,7 +517,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754579066733</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="Add graphical bones and minimal testing">
+      <option name="closed" value="true" />
+      <created>1754615443027</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1754615443029</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -543,7 +543,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update .gitignore and push branch" />
     <MESSAGE value="Fix elif/if error to allow user to update gonio radius for known instruments" />
     <MESSAGE value="Obtain fixed_or_variable mode information and update greeting message with applicability concerns" />
     <MESSAGE value="Add mm to phi conversion logic and function, add notations to next features" />
@@ -568,7 +567,8 @@
     <MESSAGE value="Fix errors with radian and degree confusion" />
     <MESSAGE value="Generate two-theta dependent data sets for FDS and ADS modes" />
     <MESSAGE value="Add extra beer-lambert functions, beam-sample checker functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add extra beer-lambert functions, beam-sample checker functions" />
+    <MESSAGE value="Add graphical bones and minimal testing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add graphical bones and minimal testing" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
