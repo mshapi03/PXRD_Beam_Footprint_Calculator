@@ -53,5 +53,35 @@ The code should be sufficiently commented to be read through with only novice un
 
 ## Beam Profile Calculations and Visualizations (Parent Script: _Beam_Profile_Calculator.py_)
 
-Progress on this feature is forthcoming!
+_Beam_Profile_Calculator.py_ is the main script that will evaluate the optic choices input by the user against and generate a figure to illustrate how the beam profile will interact with the sample. The figure will contain the following:
 
++ _Left_: A graph of irradiated length vs. 2<theta> if the user is operating in fixed divergence slit more (FDS, constant irradiated _volume_) **OR** a graph of diffraction slit opening vs. 2<theta> if the user is operating in automatic divergence slit more (ADS, constant irradiated _area_).
++ _Center_: A visual of the beam profile (singular for ADS, smallest and largest beam for FDS) on the sample holder selected for easy visual reference of whether the beam will fit.
++ _Right (**if** the user has provided ACs)_: a pie chart of what percentage of the incident beam is attenuated by your sample, and for reference, how much of the beam would be attenuated by 10 microns of your sample.
+
+The script begins by asking the user if they want to calculate their ACs, and if so moves them to the child script _MAC_Calculator.py_. If not, the user may input their LAC value directly to still perform a thickness check, or forego the _z_ evaluation entirely. Note that if you had previously calculated a sample's AC and saved it to a .json, that file is erased as soon as the parent script is run.
+
+The program then moves on to find out the relevant pieces of information from the user's instrument and sample, but with the addition of the ability to write the user's entries to the a .json file to allow them to pull them up quickly in the future. Note that a user _must_ specify the make of their instrument to be able to save their instrument and sample, as the .json libraries which house these preconfigurations use the make of the instrument as the key. The user may enter a custom make if theirs is not represented. The .json files are structured as follows:
+
++ **manufacturers_and_models.json** - a dictionary of manufacturers and instrument models of the form _{"Manufacturer": ["Model 1", "Model 2", etc._
+  + This is pre-populated with the most common models from Rigaku, Malvern Panalytical, Bruker, Thermo Fisher, and Proto.
++ **manufacturers_and_sample_holders.json** - a dictionary of manufacturers and compatible sample holders of the form _{"Manufacturer":[["Name", "Shape", x/y dimension or diameter, depth, minimum usable 2<theta>], ["Name", "Shape..._
+  + This pre-populated with the most common holders for Rigaku and Malvern Panalytical instruments
+  + The list items within each manufacturer's sub-list are what is required to establish a DiffractionSample object
++ **instruments_and_radii.json** - a dictionary holding the radii in mm of various instruments of the form _{"Instrument name": radius, "Instrument name"..._
+  + All common models in manufacturers_and_models.json have a starting radius
+  + As diffractometers are highly customizable, the script will always prompt the user with the pre-saved radius if is exists in this .json and ensure it is correct
+  + E.g. if you are using a Bruker D8 ADVANCE with a radius of 300, the software will tell you it has 200.5 mm saved and ask you to verify. If you select "n", you will have the option to write 300 mm as the preconfigured radius the next time you run the program
+
+The idea is that after a few runs, the program will have saved the settings you use most often, and you will not need to custom enter your settings each time. The code will then instantiate your sample with all information to date. Especially important to note here is _user_diffraction_sample.shape_ and _user_diffraction_sample.z_check_, which refer to the shape of the sample as "Circle" or "Rectangle" and whether the program should run portions of the code which check beam attenuation. 
+
+After creating the sample (and updating the preconfiguration .jsons if prompted), the user then describes the optical components they will use. There is an empty **preconfig_optics.json** file that can be used to write your most commonly used optical settings to be quick selected once it has an entry. Whether populated through user entries or selected from a pre-configuration, the user_optics instance of the Optics class will contain a _.mode_ attribute to indicate if the user is using "FDS" or "ADS" mode. This (alongside the earlier _user_diffraction_sample.shape_ and _.z_check_) will be used as a check to determine which math to perform and which graphs to display. Regarding the optic choices and calculations, users should be aware of the following:
+
+1. In "FDS" mode, you may enter you divergence slit width in mm instead of in degrees. To my knowledge, Bruker is the only manufacturer which ever used this convention, and so the conversion from mm to degrees that the script uses (see _DS_phi_from_mm()_) is based off of Bruker's conversions.
+2. The beam mask entry follows Malvern Panalytical's convention of printing the observed equitorial width of the beam on the edge (e.g. their "13 mm" beam mask has an opening of 9 mm cut into it to allow for propagation over ~100 mm)
+3. There is a variable _attenuation_threshold_ set early in the code header which establishes that the attenuation of the beam attenuation must be < 5% of its original to pass the thickness test. You may adjust this to whatever acceptance criteria you would like and the figures should change accordingly.
+4. All math functions are written in a function section called _Gonio and Beam Calculation Functions_, separate from Python functions I used to simplify the code. Check there for the specifics of how each of these are calculated, as I tried to leave ample notes!
+
+Most notably, **there are no guiderails to make sure your instrument has the capabilities you are checking!** You may select "ADS" mode for the Malvern Panalytical Aeris, but that will not mean the Aeris has an automatic divergence slit mode! Most user input restrictions are to the extent that they will not crash the code, and not to the extent that they represent realistic or possible settings. The same is true of the last required entry, the user's 2<theta> range, which accepts values from 0 to 180 degrees inclusive. If you are using a sample which has a minimum 2<theta> compatibility, the program will flag that warning but continue. If you are scanning above 100 degrees, the program will recommend you investigate the upper limits of a beam knife installed on your instrument (if applicable). At no point is there mention of an antiscatter slit, because most people just go a size up from their divergence slit (FDS) or omit one entirely (ADS).
+
+At this point, the user's figure will be generated using basic Matplotlib commands, with a custom caption to describe what they are looking at. The portion of the code which generates the figures begins (at time of writing) at line 661, and is notated as much as I could to allow users the opportunity to find settings they'd like to change.   
