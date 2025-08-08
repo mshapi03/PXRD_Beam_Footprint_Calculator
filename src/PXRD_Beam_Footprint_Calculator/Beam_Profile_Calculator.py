@@ -652,9 +652,6 @@ of your optical choices with your sample will be written in the caption.""", ["S
         # Calculate thickness required to hit attenuation threshold (E.g. <5% of original intensity)
         layer_to_pass_threshold = beer_lambert_layer(user_diffraction_sample.LAC, attenuation_threshold)
 
-    ### Decide if we want just figures as the output, or verbal prompts as well;
-    ### if the latter, standardize to appear before or after figure and change the above code block accordingly
-
     # Generate data set experiment depending on FDS or ADS mode:
     if user_optics.mode == "FDS": # Generate dictionary of {theta: irradiated length}
         graphable_data_set = FDS_length(user_gonio_radius, user_optics.i_slit, user_min_2theta, user_max_2theta)
@@ -662,9 +659,6 @@ of your optical choices with your sample will be written in the caption.""", ["S
         graphable_data_set = phi_solver(user_optics.i_length, user_gonio_radius, user_min_2theta, user_max_2theta)
 
     # Begin portion of the code which generates a visual figure
-    #    Recall: convention is that
-    #       axial is the length of sample well along the beam direction
-    #       equitorial is the width of the sample orthogonal to beam direction
 
     # Apply global font settings for matplotlib figure
     plt.rcParams['mathtext.fontset'] = 'stix'
@@ -672,10 +666,10 @@ of your optical choices with your sample will be written in the caption.""", ["S
 
     # If the user's sample is compatible with thickness check, generate a three-graph figure
     if user_diffraction_sample.z_check:
-        fig, graphs = plt.subplots(1, 3, figsize=(18, 6), gridspec_kw={'height_ratios': [1], 'width_ratios': [1, 1, 1]})
+        fig, graphs = plt.subplots(1, 3, figsize=(18, 6), gridspec_kw={'height_ratios': [1], 'width_ratios': [0.8, 1, 1]})
     # Else, generate a two-graph figure
     elif not user_diffraction_sample.z_check:
-        fig, graphs = plt.subplots(1, 2, figsize=(12, 6), gridspec_kw={'height_ratios': [1], 'width_ratios': [1, 1]})
+        fig, graphs = plt.subplots(1, 2, figsize=(12, 6), gridspec_kw={'height_ratios': [1], 'width_ratios': [0.8, 1]})
 
     # Format Plot One: the graph of beam length (for FDS mode) or aperture size (for ADS mode) against two-theta
     two_theta = graphs[0] # Establish the first Axes object
@@ -899,7 +893,7 @@ of your optical choices with your sample will be written in the caption.""", ["S
             passfail = "This means your sample may be considered \"infinitely thick\", and you will not see artifacts from your sample holder."
         elif not user_z_bool:  # If the sample well is not sufficiently deep for the sample
             passfail = "This means your sample may be too thin for your holder, and you may see artifacts from your sample holder (especially at high angle)."
-        z_string = "The depth of your sample is {depth:.2f} mm and the linear attenuation coefficient is {LAC:.2f} cm^-1. The inner pie chart displays how much of the X-ray beam would be attenuated by 10 microns of your sample. At the deepest point of your sample, the incident x-rays will be {int:.1g}% of their original intensity. {passfail}".format(
+        z_string = " The depth of your sample is {depth:.2f} mm and the linear attenuation coefficient is {LAC:.2f} cm^-1. The inner pie chart displays how much of the X-ray beam would be attenuated by 10 microns of your sample. At the deepest point of your sample, the incident x-rays will be {int:.1g}% of their original intensity. {passfail}".format(
             depth=user_diffraction_sample.depth, LAC=user_diffraction_sample.LAC, int=user_intensity, passfail=passfail)
     # Fill out the caption with concatenation of above strings (FYI: TeX does not work here)
     caption_text = x_y_string + x_y_modifier_string + z_string
@@ -908,7 +902,7 @@ of your optical choices with your sample will be written in the caption.""", ["S
              s=caption_text,
              wrap=True,  # Wraps text within the figure bounds
              horizontalalignment='center',
-             fontsize=10,
+             fontsize=8,
              color='black',
              #bbox=dict(facecolor=None, alpha=0.5, boxstyle='round,pad=0.5')
              )

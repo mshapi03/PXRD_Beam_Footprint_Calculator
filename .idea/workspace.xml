@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Remaining graphical logic for axes object two, no testing">
+    <list default="true" id="a50c0eb6-2c0a-449d-80b0-5ed94cc52814" name="Changes" comment="Ensure graphs are functional, tested caption generation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Profile_Calculator_Planning" beforeDir="false" afterPath="$PROJECT_DIR$/Profile_Calculator_Planning" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs/manufacturers_and_sample_holders.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs/manufacturers_and_sample_holders.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs/preconfig_optics.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Calc_JSONs/preconfig_optics.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PXRD_Beam_Footprint_Calculator/Beam_Profile_Calculator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -134,14 +134,6 @@
       <workItem from="1752925198387" duration="5703000" />
       <workItem from="1753292217760" duration="31168000" />
       <workItem from="1754053746010" duration="66000" />
-    </task>
-    <task id="LOCAL-00012" summary="Create .gitignore to ignore Scrapers">
-      <option name="closed" value="true" />
-      <created>1752687783671</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1752687783671</updated>
     </task>
     <task id="LOCAL-00013" summary="Create general-use user prompt functions">
       <option name="closed" value="true" />
@@ -527,7 +519,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754679413752</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="Ensure graphs are functional, tested caption generation">
+      <option name="closed" value="true" />
+      <created>1754688159867</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1754688159867</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -545,7 +545,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Obtain fixed_or_variable mode information and update greeting message with applicability concerns" />
     <MESSAGE value="Add mm to phi conversion logic and function, add notations to next features" />
     <MESSAGE value="Add get beam_mask_width" />
     <MESSAGE value="Add dunder methods to Optics class, pre-testing initiation" />
@@ -570,7 +569,8 @@
     <MESSAGE value="Add extra beer-lambert functions, beam-sample checker functions" />
     <MESSAGE value="Add graphical bones and minimal testing" />
     <MESSAGE value="Remaining graphical logic for axes object two, no testing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Remaining graphical logic for axes object two, no testing" />
+    <MESSAGE value="Ensure graphs are functional, tested caption generation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ensure graphs are functional, tested caption generation" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
