@@ -1,18 +1,6 @@
-Updated August 2, 2025
+Updated August 15, 2025
 
-BSOC code classes:
-
-DiffractionSample class works
-
-No need for independent instrument and goniometer classes - need to add to precursor and README that this is only for reflexion
-
-
-BSOC code will need the following Matplotlib functions:
-
-# Plot irradiated length against 2theta
-# Plot divergence slit against 2theta
-# Superimpose irradiated footprint on sample x-y
-# Superimpose irradiated depth on sample y-z
+Completed all action items at time of writing.
 
 References:
 # Slide 13 of https://web.stanford.edu/group/glam/xlab/MatSci162_172/LectureNotes/07_Geometry,%20Detectors.pdf
